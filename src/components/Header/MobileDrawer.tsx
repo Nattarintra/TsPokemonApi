@@ -9,12 +9,6 @@ interface MobileDrawerProps {
     onClose: () => void;
 }
 
-const drawerHoverStyle = {
-    "&:hover": {
-        backgroundColor: "action.hover",
-
-    }
-}
 
 const MobileDrawer = ({ open, onClose }: MobileDrawerProps) => {
     return (
@@ -23,12 +17,7 @@ const MobileDrawer = ({ open, onClose }: MobileDrawerProps) => {
                 <List sx={{ pt: 2 }}>
                     {navLinks.map((link) => (
                         <ListItem key={link.path} disablePadding>
-                            <ListItemButton
-                                component={LinkBehavior}
-                                to={link.path}
-                                onClick={onClose}
-                                sx={drawerHoverStyle}
-                            >
+                            <ListItemButton component={LinkBehavior} to={link.path} onClick={onClose}>
                                 <ListItemText primary={link.label} />
                             </ListItemButton>
                         </ListItem>

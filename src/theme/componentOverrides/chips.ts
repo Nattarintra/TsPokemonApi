@@ -1,6 +1,7 @@
 import { radii } from "@theme/tokens/radii";
+import type { Components, Theme } from "@mui/material/styles";
 
-export const chipOverrides = {
+export const chipOverrides: Components<Theme> = {
     MuiChip: {
         styleOverrides: {
             root: {

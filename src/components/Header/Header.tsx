@@ -9,29 +9,13 @@ import { LinkBehavior } from "@/utils/LinkBehavior";
 import { navLinks } from "./header.config";
 
 
-
-type HeaderStyleKeys = "navContainer" | "navLink" | "mobileButton";
+type HeaderStyleKeys = "navContainer" | "mobileButton";
 
 const headerStyles: Record<HeaderStyleKeys, SxProps<Theme>> = {
     navContainer: {
         ml: "auto",
         display: { xs: "none", md: "flex" },
-        gap: 3,
-    },
-
-    navLink: {
-        textDecoration: "none",
-        color: "text.primary",
-        fontWeight: 500,
-        transition: (theme) =>
-            theme.transitions.create(["color", "transform"], {
-                duration: theme.transitions.duration.short,
-            }),
-
-        "&:hover": {
-            color: "text.secondary",
-            transform: "scale(1.05)",
-        },
+        gap: (theme) => theme.spacing(3)
     },
 
     mobileButton: {
@@ -57,12 +41,7 @@ const Header = (): ReactElement => {
                     {/* Desktop */}
                     <Box sx={headerStyles.navContainer} >
                         {navLinks.map((link) => (
-                            <Link
-                                key={link.path}
-                                component={LinkBehavior}
-                                to={link.path}
-                                sx={headerStyles.navLink}
-                            >
+                            <Link key={link.path} component={LinkBehavior} to={link.path}>
                                 {link.label}
                             </Link>
                         ))}

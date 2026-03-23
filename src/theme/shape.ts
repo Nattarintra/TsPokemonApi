@@ -1,7 +1,7 @@
 import { radii } from "@theme/tokens/radii";
 
 export const shape = {
-    borderRadius: radii.none,
+    borderRadius: radii.sm,
 
     radius: {
         none: radii.none,

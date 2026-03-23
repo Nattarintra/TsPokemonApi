@@ -1,31 +1,25 @@
-import { createTheme } from "@mui/material/styles";
+import {
+    createTheme,
+    responsiveFontSizes,
+    type ThemeOptions,
+} from "@mui/material/styles";
+
 import { palette } from "@theme/palette";
 import { typography } from "@theme/typography";
 import { shape } from "@theme/shape";
+import { components } from "@theme/componentOverrides";
 
-import { cardOverrides } from "@theme/componentOverrides/cards";
-import { buttonOverrides } from "@theme/componentOverrides/buttons";
-import { chipOverrides } from "@theme/componentOverrides/chips";
-import { inputOverrides } from "@theme/componentOverrides/inputs";
-import { paginationOverrides } from "@theme/componentOverrides/pagination";
-import { basicLayoutOverrides } from "@theme/componentOverrides/basicLayout"
-import { feedbackOverrides } from "@theme/componentOverrides/feedback";
-import { appBarOverrides } from "@theme/componentOverrides/appBar";
-
-// This is the only file that calls createTheme().
-export const pokemonTheme = createTheme({
+const themeOptions: ThemeOptions = {
     palette,
     typography,
     shape,
     spacing: 8,
-    components: {
-        ...basicLayoutOverrides,
-        ...cardOverrides,
-        ...buttonOverrides,
-        ...chipOverrides,
-        ...inputOverrides,
-        ...paginationOverrides,
-        ...feedbackOverrides,
-        ...appBarOverrides,
-    },
-});
+    components,
+};
+
+let theme = createTheme(themeOptions);
+
+// responsive typography
+theme = responsiveFontSizes(theme);
+
+export const pokemonTheme = theme;

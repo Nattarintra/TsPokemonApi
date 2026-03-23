@@ -1,35 +1,48 @@
-import { colors } from "@theme/tokens/colors";
+import type { Components, Theme } from "@mui/material/styles";
+import { alpha } from "@mui/material/styles";
 
-export const feedbackOverrides = {
+export const feedbackOverrides: Components<Theme> = {
     MuiLinearProgress: {
         styleOverrides: {
-            root: {
+            root: ({ theme }) => ({
                 height: 10,
-                borderRadius: 999,
-                backgroundColor: "rgba(48, 167, 215, 0.15)",
+                borderRadius: theme.shape.radius.full,
+                backgroundColor: alpha(theme.palette.primary.main, 0.15),
                 overflow: "hidden",
-            },
-            bar: {
-                borderRadius: 999,
-            },
+
+                "&.MuiLinearProgress-colorSuccess .MuiLinearProgress-bar": {
+                    backgroundColor: theme.palette.success.main,
+                },
+            }),
+
+            bar: ({ theme }) => ({
+                borderRadius: theme.shape.radius.full,
+                backgroundColor: theme.palette.primary.main,
+            }),
         },
     },
 
     MuiDivider: {
         styleOverrides: {
-            root: {
-                borderColor: colors.divider,
-            },
+            root: ({ theme }) => ({
+                borderColor: theme.palette.divider,
+            }),
         },
     },
 
     MuiTooltip: {
         styleOverrides: {
-            tooltip: {
-                borderRadius: 8,
-                fontSize: "0.75rem",
-                backgroundColor: colors.black,
-            },
+            tooltip: ({ theme }) => ({
+                borderRadius: theme.shape.radius.small,
+                fontSize: theme.typography.caption.fontSize,
+                backgroundColor: theme.palette.grey[900],
+                color: theme.palette.common.white,
+                boxShadow: theme.shadows[3],
+            }),
+
+            arrow: ({ theme }) => ({
+                color: theme.palette.grey[900],
+            }),
         },
     },
 };

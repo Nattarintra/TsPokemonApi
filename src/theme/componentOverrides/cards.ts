@@ -1,43 +1,44 @@
-import { colors } from "@theme/tokens/colors";
-import { radii } from "@theme/tokens/radii";
+import type { Components, Theme } from "@mui/material/styles";
 
-export const cardOverrides = {
+export const cardOverrides: Components<Theme> = {
     MuiCard: {
         styleOverrides: {
-            root: {
-                borderRadius: radii.sm,
-                border: `1px solid ${colors.border}`,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            root: ({ theme }) => ({
+                borderRadius: theme.shape.radius.small,
+                border: `1px solid ${theme.palette.divider}`,
+                boxShadow: theme.shadows[1],
                 backgroundImage: "none",
                 overflow: "hidden",
                 transition: "transform 0.2s ease, box-shadow 0.2s ease",
+
                 "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 6px 14px rgba(0,0,0,0.12)",
+                    transform: "translateY(-4px)",
+                    boxShadow: theme.shadows[4],
                 },
-            },
+            }),
         },
     },
 
     MuiCardContent: {
         styleOverrides: {
-            root: {
-                padding: 16,
+            root: ({ theme }) => ({
+                padding: theme.spacing(2),
+
                 "&:last-child": {
-                    paddingBottom: 16,
+                    paddingBottom: theme.spacing(2),
                 },
-            },
+            }),
         },
     },
 
     MuiCardMedia: {
         styleOverrides: {
-            root: {
+            root: ({ theme }) => ({
                 height: 140,
-                objectFit: "contain" as const,
-                backgroundColor: colors.surfaceAlt,
-                padding: 16,
-            },
+                objectFit: "contain",
+                backgroundColor: theme.palette.background.default,
+                padding: theme.spacing(2),
+            }),
         },
     },
 };

@@ -1,25 +1,63 @@
-import { colors } from "@theme/tokens/colors";
-import { radii } from "@theme/tokens/radii";
+import type { Components, Theme } from "@mui/material/styles";
 
-export const buttonOverrides = {
+export const buttonOverrides: Components<Theme> = {
     MuiButton: {
         defaultProps: {
             disableElevation: true,
         },
+
         styleOverrides: {
-            root: {
-                borderRadius: radii.sm,
+            root: ({ theme }) => ({
+                borderRadius: theme.shape.radius.small,
                 textTransform: "none",
                 fontWeight: 700,
-            },
-            containedPrimary: {
+                padding: theme.spacing(1, 2),
+                transition: "all 0.2s ease",
+
+                "&:focus-visible": {
+                    outline: `2px solid ${theme.palette.primary.main}`,
+                    outlineOffset: 2,
+                }
+            }),
+
+            contained: ({ theme }) => ({
+                boxShadow: "none",
+
                 "&:hover": {
-                    backgroundColor: "#2698c6",
+                    boxShadow: "none",
                 },
-            },
-            outlined: {
-                borderColor: colors.border,
-            },
+            }),
+
+            containedPrimary: ({ theme }) => ({
+                backgroundColor: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
+
+                "&:hover": {
+                    backgroundColor: theme.palette.primary.dark,
+                },
+
+                "&:active": {
+                    backgroundColor: theme.palette.primary.dark,
+                },
+            }),
+
+            outlined: ({ theme }) => ({
+                borderColor: theme.palette.divider,
+                color: theme.palette.text.primary,
+
+                "&:hover": {
+                    borderColor: theme.palette.primary.main,
+                    backgroundColor: theme.palette.action.hover,
+                },
+            }),
+
+            text: ({ theme }) => ({
+                color: theme.palette.primary.main,
+
+                "&:hover": {
+                    backgroundColor: theme.palette.action.hover,
+                },
+            }),
         },
     },
 };
