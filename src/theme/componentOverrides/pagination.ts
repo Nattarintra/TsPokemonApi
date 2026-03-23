@@ -21,7 +21,7 @@ export const paginationOverrides = {
                 backgroundColor: colors.surface,
                 "&.Mui-selected": {
                     backgroundColor: colors.primary,
-                    color: "#FFFFFF",
+                    color: colors.surface,
                     borderColor: colors.primary,
                 },
             },

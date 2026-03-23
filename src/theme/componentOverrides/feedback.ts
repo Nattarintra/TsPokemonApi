@@ -28,7 +28,7 @@ export const feedbackOverrides = {
             tooltip: {
                 borderRadius: 8,
                 fontSize: "0.75rem",
-                backgroundColor: "#222222",
+                backgroundColor: colors.black,
             },
         },
     },

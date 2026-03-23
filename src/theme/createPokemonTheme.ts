@@ -10,6 +10,7 @@ import { inputOverrides } from "@theme/componentOverrides/inputs";
 import { paginationOverrides } from "@theme/componentOverrides/pagination";
 import { basicLayoutOverrides } from "@theme/componentOverrides/basicLayout"
 import { feedbackOverrides } from "@theme/componentOverrides/feedback";
+import { appBarOverrides } from "@theme/componentOverrides/appBar";
 
 // This is the only file that calls createTheme().
 export const pokemonTheme = createTheme({
@@ -25,5 +26,6 @@ export const pokemonTheme = createTheme({
         ...inputOverrides,
         ...paginationOverrides,
         ...feedbackOverrides,
+        ...appBarOverrides,
     },
 });

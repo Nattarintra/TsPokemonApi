@@ -4,7 +4,7 @@ export const chipOverrides = {
     MuiChip: {
         styleOverrides: {
             root: {
-                borderRadius: radii.pill,
+                borderRadius: radii.full,
                 fontWeight: 700,
                 fontSize: "0.75rem",
                 height: 24,

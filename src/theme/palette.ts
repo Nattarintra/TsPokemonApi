@@ -4,14 +4,14 @@ export const palette = {
     mode: "light" as const,
     primary: {
         main: colors.primary,
-        contrastText: "#FFFFFF",
+        contrastText: colors.surface,
     },
     secondary: {
         main: colors.secondary,
-        contrastText: "#FFFFFF",
+        contrastText: colors.surface,
     },
     background: {
-        default: colors.background,
+        default: colors.primary,
         paper: colors.surface,
     },
     text: {
