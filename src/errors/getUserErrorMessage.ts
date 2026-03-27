@@ -21,9 +21,5 @@ export const getUserErrorMessage = (error: unknown): string => {
                 return ERROR_MESSAGES.DEFAULT;
         }
     }
-
-    if (error.type === "PARTIAL_ERROR") {
-        return ERROR_MESSAGES.PARTIAL(error.failed);
-    }
     return ERROR_MESSAGES.DEFAULT;
 };
