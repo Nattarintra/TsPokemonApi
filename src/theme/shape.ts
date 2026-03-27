@@ -5,6 +5,7 @@ export const shape = {
 
     radius: {
         none: radii.none,
+        extraSmall: radii.xs,
         small: radii.sm,
         medium: radii.md,
         large: radii.lg,

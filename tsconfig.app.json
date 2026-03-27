@@ -41,6 +41,12 @@
       ],
       "@router/*": [
         "router/*"
+      ],
+      "@errors/*": [
+        "errors/*"
+      ],
+      "@api/*": [
+        "api/*"
       ]
     },
     /* Bundler mode */

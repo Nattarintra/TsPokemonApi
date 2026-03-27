@@ -20,6 +20,8 @@ const config: Config = {
         '^@config/(.*)$': '<rootDir>/src/config/$1',
         '^@pages/(.*)$': '<rootDir>/src/pages/$1',
         '^@router/(.*)$': '<rootDir>/src/router/$1',
+        '^@errors/(.*)$': '<rootDir>/src/errors/$1',
+        '^@api/(.*)$': '<rootDir>/src/api/$1',
 
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy', // prevent error when import CSS
     },

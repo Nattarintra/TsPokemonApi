@@ -20,7 +20,7 @@ export const buttonOverrides: Components<Theme> = {
                 }
             }),
 
-            contained: ({ theme }) => ({
+            contained: ({ }) => ({
                 boxShadow: "none",
 
                 "&:hover": {
