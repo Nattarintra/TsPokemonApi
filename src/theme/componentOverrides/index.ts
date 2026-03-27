@@ -7,6 +7,7 @@ import { feedbackOverrides } from "./feedback";
 import { inputOverrides } from "./inputs";
 import { paginationOverrides } from "./pagination";
 import { linkOverrides } from "./links";
+import { skeletonOverrides } from "./skeletons";
 
 export const components = {
     ...baseStylesOverrides,
@@ -18,4 +19,5 @@ export const components = {
     ...feedbackOverrides,
     ...appBarOverrides,
     ...linkOverrides,
+    ...skeletonOverrides,
 };

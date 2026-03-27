@@ -6,3 +6,5 @@ export const RETRY_MAX_DELAY = 2000;
 
 
 export const POKEMON_LIMIT = 20;
+
+export const SKELETON_COUNT = 6;

@@ -51,6 +51,9 @@ export const env = {
     defaultPageSize: toNumber(import.meta.env.VITE_DEFAULT_PAGE_SIZE, 12),
 
     showPokemonStats: toBoolean(import.meta.env.VITE_SHOW_POKEMON_STATS, true),
+
+    delayTime: toNumber(import.meta.env.VITE_API_DELAY_MS, 3000),
+
 } as const
 
 export type AppEnv = typeof env

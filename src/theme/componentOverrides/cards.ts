@@ -34,7 +34,8 @@ export const cardOverrides: Components<Theme> = {
     MuiCardMedia: {
         styleOverrides: {
             root: ({ theme }) => ({
-                height: 140,
+                width: "100%",
+                height: "100%",
                 objectFit: "contain",
                 backgroundColor: theme.palette.background.default,
                 padding: theme.spacing(2),

@@ -8,6 +8,7 @@ interface ImportMetaEnv {
     readonly VITE_ENABLE_FILTERS?: string
     readonly VITE_DEFAULT_PAGE_SIZE?: string
     readonly VITE_SHOW_POKEMON_STATS?: string
+    readonly VITE_API_DELAY_MS?: string
 }
 
 interface ImportMeta {

@@ -5,17 +5,31 @@ import { pokemonTypeColors, type PokemonType } from "@/theme/tokens";
 import type { PokemonCardProps } from "@/utils/types/pokemon.type";
 
 
-const typeBackgroundColor = (type: PokemonType): SxProps<Theme> => (theme) => ({
-    textTransform: "capitalize",
-    backgroundColor: pokemonTypeColors[type],
-    color: theme.palette.getContrastText(pokemonTypeColors[type]),
-});
+export const PokemonCardStyle = {
+    typeBackgroundColor:
+        (type: PokemonType): SxProps<Theme> =>
+            (theme) => ({
+                textTransform: "capitalize",
+                backgroundColor: pokemonTypeColors[type],
+                color: theme.palette.getContrastText(
+                    pokemonTypeColors[type]
+                ),
+            }),
+
+    boxImage: {
+        width: "100%",
+        aspectRatio: "1 / 1",
+        overflow: "hidden",
+    },
+};
 
 
 const PokemonCard = ({ id, name, image, types }: PokemonCardProps): ReactElement => {
     return (
         <MuiCard >
-            <CardMedia component="img" image={image} alt={name} />
+            <Box sx={PokemonCardStyle.boxImage}>
+                <CardMedia component="img" image={image} alt={name} />
+            </Box>
 
             <CardContent>
                 <Typography variant="caption" color="text.secondary">
@@ -29,7 +43,7 @@ const PokemonCard = ({ id, name, image, types }: PokemonCardProps): ReactElement
                         <Chip
                             key={type}
                             label={type}
-                            sx={typeBackgroundColor(type as PokemonType)}
+                            sx={PokemonCardStyle.typeBackgroundColor(type as PokemonType)}
                         />
                     ))}
                 </Box>

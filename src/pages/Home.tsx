@@ -5,6 +5,7 @@ import type { ReactElement } from "react";
 import ErrorBanner from "@/components/Errors/ErrorBanner";
 import { getUserErrorMessage } from "@/errors/getUserErrorMessage";
 import { getPartialErrorMessage } from "@/errors/getPartialErrorMessage";
+import PokemonGridSkeleton from "@/components/Skeletons/PokemonGridSkeleton";
 
 
 const Home = (): ReactElement => {
@@ -16,8 +17,7 @@ const Home = (): ReactElement => {
     const failed = data?.failed ?? 0;
 
     //  1 Loading
-    // TODO: Add Skeleton Loader
-    if ((isLoading)) return <p>Loading...</p>
+    if ((isLoading)) return <PokemonGridSkeleton />
 
     // 2 error
     if (error) {
