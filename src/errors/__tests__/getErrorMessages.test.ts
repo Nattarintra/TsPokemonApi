@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { getUserErrorMessage, getPartialErrorMessage, ERROR_MESSAGES } from "../getErrorMessages";
+import { getUserErrorMessage, getPartialErrorMessage, ERROR_MESSAGES } from "@/errors/getErrorMessages";
 import type { ApiError } from "@/types/apiError.type";
 
 describe("Error Message Handlers", () => {

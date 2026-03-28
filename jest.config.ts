@@ -1,11 +1,12 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-    preset: 'ts-jest',
+    preset: 'ts-jest/presets/default-esm',
     testEnvironment: 'jsdom',
 
+    extensionsToTreatAsEsm: ['.ts', '.tsx'],
     transform: {
-        '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
+        '^.+\\.(ts|tsx)$': ['ts-jest', { useESM: true, tsconfig: 'tsconfig.spec.json' }],
     },
 
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],

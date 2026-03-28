@@ -29,28 +29,30 @@ function toNumber(envValue: string | undefined, fallback: number): number {
     return parsed
 }
 
+const metaEnv = (import.meta as any).env || process.env || {};
+
 export const env = {
-    appName: getRequiredEnv('VITE_APP_NAME', import.meta.env.VITE_APP_NAME),
+    appName: getRequiredEnv('VITE_APP_NAME', metaEnv.VITE_APP_NAME),
 
     apiBaseUrl: getRequiredEnv(
         'VITE_API_BASE_URL',
-        import.meta.env.VITE_API_BASE_URL
+        metaEnv.VITE_API_BASE_URL
     ),
 
     pokemonImageBaseUrl: getOptionalEnv(
-        import.meta.env.VITE_POKEMON_IMAGE_BASE_URL,
+        metaEnv.VITE_POKEMON_IMAGE_BASE_URL,
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png'
     ),
 
-    enableSearch: toBoolean(import.meta.env.VITE_ENABLE_SEARCH, true),
+    enableSearch: toBoolean(metaEnv.VITE_ENABLE_SEARCH, true),
 
-    enableFilters: toBoolean(import.meta.env.VITE_ENABLE_FILTERS, true),
+    enableFilters: toBoolean(metaEnv.VITE_ENABLE_FILTERS, true),
 
-    defaultPageSize: toNumber(import.meta.env.VITE_DEFAULT_PAGE_SIZE, 12),
+    defaultPageSize: toNumber(metaEnv.VITE_DEFAULT_PAGE_SIZE, 12),
 
-    showPokemonStats: toBoolean(import.meta.env.VITE_SHOW_POKEMON_STATS, true),
+    showPokemonStats: toBoolean(metaEnv.VITE_SHOW_POKEMON_STATS, true),
 
-    delayTime: toNumber(import.meta.env.VITE_API_DELAY_MS, 3000),
+    delayTime: toNumber(metaEnv.VITE_API_DELAY_MS, 3000),
 
 } as const
 
