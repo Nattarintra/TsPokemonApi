@@ -1,7 +1,7 @@
 import { Drawer, Box, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { navLinks } from "./header.config";
 
-import { LinkBehavior } from "@/utils/LinkBehavior";
+import { LinkBehavior } from "@/components/Links/LinkBehavior";
 
 
 interface MobileDrawerProps {

@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import { Card as MuiCard, CardMedia, CardContent, Typography, Box, Chip, type SxProps } from "@mui/material";
 import type { Theme } from "@mui/material/styles";
 import { pokemonTypeColors, type PokemonType } from "@/theme/tokens";
-import type { PokemonCardProps } from "@/utils/types/pokemon.type";
+import type { PokemonCardProps } from "@/types/pokemon.type";
 
 
 export const PokemonCardStyle = {

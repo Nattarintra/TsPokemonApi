@@ -1,6 +1,6 @@
-import { getPokemonListData } from "@/services/pokemon.service";
+import { getPokemonListData } from "@/api/pokemon.service";
 import { getRetryDelay, shouldRetry } from "@/utils/retry";
-import type { PokemonListResult } from "@/utils/types/pokemon.type";
+import type { PokemonListResult } from "@/types/pokemon.type";
 import { useQuery } from "@tanstack/react-query"
 
 

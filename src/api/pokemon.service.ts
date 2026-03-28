@@ -1,5 +1,5 @@
 
-import type { Pokemon, PokemonCardProps, PokemonListResult } from "@/utils/types/pokemon.type";
+import type { Pokemon, PokemonCardProps, PokemonListResult } from "@/types/pokemon.type";
 import { fetchPokemonDetails, fetchPokemonList } from "@/api/pokemon.api";
 import { env } from "@/config";
 

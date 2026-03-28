@@ -1,5 +1,5 @@
-import type { Pokemon, PokemonListItem } from "@/utils/types/pokemon.type";
-import { BASE_URL, POKEMON_LIMIT } from "@/utils/constants/constants";
+import type { Pokemon, PokemonListItem } from "@/types/pokemon.type";
+import { env } from "@/config";
 import { handleHttpError } from "@/errors/handleHttpError";
 import { handleNetworkError } from "@/errors/handleNetworkError";
 import { fetchWithErrorHandling } from "./fetchWithErrorHandling";
@@ -8,7 +8,7 @@ import { safePromiseAll } from "@/utils/safePromiseAll";
 
 export const fetchPokemonList = async (): Promise<PokemonListItem[]> => {
     try {
-        const res = await fetch(`${BASE_URL}/pokemon?limit=${POKEMON_LIMIT}`);
+        const res = await fetch(`${env.apiBaseUrl}/pokemon?limit=${env.defaultPageSize}`);
 
         handleHttpError(res);
 

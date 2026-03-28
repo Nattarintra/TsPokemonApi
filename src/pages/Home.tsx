@@ -3,8 +3,7 @@ import PokemonCard from "@/components/Cards/PokemonCard";
 import { Grid, LinearProgress } from "@mui/material";
 import type { ReactElement } from "react";
 import ErrorBanner from "@/components/Errors/ErrorBanner";
-import { getUserErrorMessage } from "@/errors/getUserErrorMessage";
-import { getPartialErrorMessage } from "@/errors/getPartialErrorMessage";
+import { getUserErrorMessage, getPartialErrorMessage } from "@/errors/getErrorMessages";
 import PokemonGridSkeleton from "@/components/Skeletons/PokemonGridSkeleton";
 
 

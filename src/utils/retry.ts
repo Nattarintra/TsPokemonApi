@@ -1,5 +1,5 @@
-import { MAX_RETRIES, RETRY_BASE_DELAY, RETRY_MAX_DELAY } from "@/utils/constants/constants";
-import type { ApiError } from "@/utils/types/apiError.type";
+import { MAX_RETRIES, RETRY_BASE_DELAY, RETRY_MAX_DELAY } from "@/constants";
+import type { ApiError } from "@/types/apiError.type";
 
 export const isApiError = (error: unknown): error is ApiError => {
     return (

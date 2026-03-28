@@ -40,6 +40,16 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      'react/react-in-jsx-scope': 'off',
+      'no-restricted-imports': [
+        'warn',
+        {
+          patterns: [{
+            group: ['../*'],
+            message: 'Please use the `@/` path alias instead of relative parent imports (`../`).',
+          }],
+        },
+      ],
     },
   },
 );

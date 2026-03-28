@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { Grid } from "@mui/material";
 import PokemonCardSkeleton from "./PokemonCardSkeleton";
-import { SKELETON_COUNT } from "@/utils/constants/constants";
+import { SKELETON_COUNT } from "@/constants";
 
 
 const PokemonGridSkeleton = (): ReactElement => {

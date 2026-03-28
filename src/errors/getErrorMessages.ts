@@ -1,5 +1,13 @@
 import { isApiError } from "@/utils/retry";
-import { ERROR_MESSAGES } from "./errorMessages";
+
+export const ERROR_MESSAGES = {
+    NETWORK: "Check your internet connection.",
+    DEFAULT: "Something went wrong.",
+    NOT_FOUND: "The requested Pokémon could not be found.",
+    SERVER: "Server error. Please try again.",
+    PARTIAL: (count: number) =>
+        `Some Pokémon failed to load (${count})`,
+};
 
 export const getUserErrorMessage = (error: unknown): string => {
 
@@ -22,4 +30,8 @@ export const getUserErrorMessage = (error: unknown): string => {
         }
     }
     return ERROR_MESSAGES.DEFAULT;
+};
+
+export const getPartialErrorMessage = (failed: number): string => {
+    return ERROR_MESSAGES.PARTIAL(failed);
 };

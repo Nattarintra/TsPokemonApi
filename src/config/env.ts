@@ -1,7 +1,5 @@
 // src/config/env.ts
 
-type EnvValue = string | boolean | number
-
 function getRequiredEnv(envName: string, envValue: string | undefined): string {
     if (!envValue || envValue.trim() === '') {
         throw new Error(`Missing environment variable: ${envName}`)
