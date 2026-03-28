@@ -1,13 +1,6 @@
 import { MAX_RETRIES, RETRY_BASE_DELAY, RETRY_MAX_DELAY } from "@/constants";
-import type { ApiError } from "@/types/apiError.type";
+import { isApiError } from "./guards";
 
-export const isApiError = (error: unknown): error is ApiError => {
-    return (
-        typeof error === "object" &&
-        error !== null &&
-        "type" in error
-    );
-};
 
 export const shouldRetry = (failureCount: number, error: unknown): boolean => {
     // unknown retry (safe fallback)

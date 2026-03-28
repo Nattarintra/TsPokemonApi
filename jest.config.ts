@@ -5,7 +5,7 @@ const config: Config = {
     testEnvironment: 'jsdom',
 
     transform: {
-        '^.+\\.(ts|tsx)$': 'ts-jest',
+        '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
     },
 
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
