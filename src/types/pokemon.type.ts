@@ -1,35 +1,40 @@
 export interface PokemonCardProps {
-    id: number;
-    name: string;
-    image: string;
-    types: string[];
+  id: number;
+  name: string;
+  image: string;
+  types: string[];
 }
 
 export interface PokemonListItem {
-    name: string;
-    url: string;
+  name: string;
+  url: string;
 }
 
 export interface PokemonTypeEntry {
-    type: {
-        name: string;
-    };
+  type: {
+    name: string;
+  };
 }
 
 export interface Pokemon {
-    id: number;
-    name: string;
-    sprites: {
-        other: {
-            "official-artwork": {
-                front_default: string;
-            };
-        };
+  id: number;
+  name: string;
+  sprites: {
+    other: {
+      'official-artwork': {
+        front_default: string;
+      };
     };
-    types: PokemonTypeEntry[];
+  };
+  types: PokemonTypeEntry[];
 }
 
 export type PokemonListResult = {
-    pokemons: PokemonCardProps[];
-    failed: number;
+  pokemons: PokemonCardProps[];
+  failed: number;
 };
+
+export interface PokemonListResponse {
+  pokemons: Pokemon[];
+  failed: number;
+}

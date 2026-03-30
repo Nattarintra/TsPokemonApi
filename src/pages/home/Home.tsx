@@ -5,18 +5,20 @@ import type { ReactElement } from "react";
 import ErrorBanner from "@/components/Errors/ErrorBanner";
 import { getUserErrorMessage, getPartialErrorMessage } from "@/errors/getErrorMessages";
 import PokemonGridSkeleton from "@/components/Skeletons/PokemonGridSkeleton";
+import type { PokemonCardProps, PokemonListResult } from "@/types/pokemon.type";
 
 const Home = (): ReactElement => {
   const { data, isLoading, error, refetch, isFetching } = usePokemonListQuery();
 
-  // Safe fallback
-  const pokemons = data?.pokemons ?? [];
-  const failed = data?.failed ?? 0;
+  // Safe fallback with type assertion
+  const typedData = data as PokemonListResult | undefined;
+  const pokemons = typedData?.pokemons ?? [];
+  const failed = typedData?.failed ?? 0;
 
-  //  1 Loading
+  // 1. Loading
   if (isLoading) return <PokemonGridSkeleton />;
 
-  // 2 error
+  // 2. Fatal error
   if (error) {
     return (
       <ErrorBanner
@@ -28,7 +30,7 @@ const Home = (): ReactElement => {
     );
   }
 
-  // Edge case: nothing loaded
+  // 3. Edge case: nothing loaded
   if (pokemons.length === 0 && failed > 0) {
     return (
       <ErrorBanner
@@ -39,13 +41,14 @@ const Home = (): ReactElement => {
       />
     );
   }
-  // 3 success + partial error
+
+  // 4. Success + partial error
   return (
     <>
       {isFetching && !isLoading && <LinearProgress />}
       {failed > 0 && <ErrorBanner message={getPartialErrorMessage(failed)} variant="inline" />}
       <Grid container spacing={5} sx={{ width: '80%', margin: '20px auto' }}>
-        {pokemons.map((pokemon) => (
+        {pokemons.map((pokemon: PokemonCardProps) => (
           <Grid key={pokemon.id} size={{ xs: 12, md: 6, lg: 4 }}>
             <PokemonCard {...pokemon} />
           </Grid>
