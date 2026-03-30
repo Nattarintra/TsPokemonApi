@@ -3,6 +3,7 @@ import type { Config } from 'jest';
 const config: Config = {
     preset: 'ts-jest/presets/default-esm',
     testEnvironment: 'jsdom',
+    setupFiles: ['<rootDir>/src/test-utils/setupPolyfills.ts'],
 
     extensionsToTreatAsEsm: ['.ts', '.tsx'],
     transform: {

@@ -4,7 +4,7 @@ import Logo from "@/components/Logo/Logo";
 import logo from "@/assets/images/logo.png";
 import MobileDrawer from "./MobileDrawer";
 import { Box, AppBar, Toolbar, IconButton, Link, type SxProps, type Theme } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from "@mui/icons-material/Menu";
 import { LinkBehavior } from "@/components/Links/LinkBehavior";
 import { navLinks } from "./header.config";
 

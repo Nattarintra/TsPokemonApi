@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import type { ReactElement } from "react";
 import {
   Button,
   Container,
@@ -8,9 +8,9 @@ import {
   type SxProps,
   type Theme,
 } from '@mui/material';
-import SearchOffRoundedIcon from '@mui/icons-material/SearchOffRounded';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import { Link as RouterLink } from 'react-router-dom';
+import SearchOffRoundedIcon from "@mui/icons-material/SearchOffRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import { Link as RouterLink } from "react-router-dom";
 
 type NotFoundStyleKeys = 'page' | 'card' | 'icon' | 'eyebrow' | 'actions';
 
