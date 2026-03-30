@@ -5,7 +5,7 @@ import { pokemonTypeColors, type PokemonType } from "@/theme/tokens";
 import type { PokemonCardProps } from "@/types/pokemon.type";
 
 
-export const PokemonCardStyle = {
+const pokemonCardStyles = {
     typeBackgroundColor:
         (type: PokemonType): SxProps<Theme> =>
             (theme) => ({
@@ -27,7 +27,7 @@ export const PokemonCardStyle = {
 const PokemonCard = ({ id, name, image, types }: PokemonCardProps): ReactElement => {
     return (
         <MuiCard >
-            <Box sx={PokemonCardStyle.boxImage}>
+            <Box sx={pokemonCardStyles.boxImage}>
                 <CardMedia component="img" image={image} alt={name} />
             </Box>
 
@@ -43,7 +43,7 @@ const PokemonCard = ({ id, name, image, types }: PokemonCardProps): ReactElement
                         <Chip
                             key={type}
                             label={type}
-                            sx={PokemonCardStyle.typeBackgroundColor(type as PokemonType)}
+                            sx={pokemonCardStyles.typeBackgroundColor(type as PokemonType)}
                         />
                     ))}
                 </Box>

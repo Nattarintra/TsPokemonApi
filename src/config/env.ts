@@ -29,7 +29,8 @@ function toNumber(envValue: string | undefined, fallback: number): number {
     return parsed
 }
 
-const metaEnv = (import.meta as any).env || process.env || {};
+const processEnv = typeof process !== "undefined" ? process.env : undefined;
+const metaEnv: Partial<Record<keyof ImportMetaEnv, string>> = import.meta.env ?? processEnv ?? {};
 
 export const env = {
     appName: getRequiredEnv('VITE_APP_NAME', metaEnv.VITE_APP_NAME),

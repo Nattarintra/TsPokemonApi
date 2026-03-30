@@ -3,8 +3,8 @@ import { Link as RouterLink, type LinkProps as RouterLinkProps } from "react-rou
 
 export const LinkBehavior = forwardRef<HTMLAnchorElement, RouterLinkProps>(
     (props, ref) => {
-        console.log("Navigate to:", props.to);  // analytics
-
         return <RouterLink ref={ref} {...props} />;
     }
 );
+
+LinkBehavior.displayName = "LinkBehavior";

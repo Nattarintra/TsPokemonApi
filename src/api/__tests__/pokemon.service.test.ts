@@ -2,11 +2,13 @@
  * @jest-environment node
  */
 import { jest, describe, it, expect, beforeAll, afterEach } from "@jest/globals";
-import type { PokemonListItem, PokemonListResult } from "@/types/pokemon.type";
+import type { Pokemon, PokemonListItem } from "@/types/pokemon.type";
 import { env } from "@/config/env";
 
 const mockFetchPokemonList = jest.fn<() => Promise<PokemonListItem[]>>();
-const mockFetchPokemonDetails = jest.fn<(list: PokemonListItem[]) => Promise<PokemonListResult>>();
+const mockFetchPokemonDetails = jest.fn<
+    (list: PokemonListItem[]) => Promise<{ pokemons: Pokemon[]; failed: number }>
+>();
 
 jest.unstable_mockModule("@/api/pokemon.api", () => ({
     fetchPokemonList: mockFetchPokemonList,
@@ -29,7 +31,7 @@ describe("Pokemon Service", () => {
 
     describe("formatPokemon", () => {
         it("maps raw Pokemon API response to the App's UI data format", () => {
-            const rawPokemon: any = {
+            const rawPokemon: Pokemon = {
                 id: 25,
                 name: "pikachu",
                 sprites: {
@@ -59,13 +61,13 @@ describe("Pokemon Service", () => {
         it("orchestrates fetch list, details, and formatting while injecting delays correctly", async () => {
             // 1. Setup our dummy data
             const mockList = [{ name: "pikachu", url: "https://poke.api/25" }];
-            const rawPikachu: any = {
+            const rawPikachu: Pokemon = {
                 id: 25,
                 name: "pikachu",
                 sprites: { other: { "official-artwork": { front_default: "img.png" } } },
                 types: [{ type: { name: "electric" } }]
             };
-            const mockDetails: PokemonListResult = {
+            const mockDetails = {
                 pokemons: [rawPikachu],
                 failed: 0
             };
@@ -78,7 +80,7 @@ describe("Pokemon Service", () => {
 
             // 3. Temporarily bypass the intentional UI delay for speed
             const originalDelay = env.delayTime;
-            (env as any).delayTime = 0;
+            Object.defineProperty(env, "delayTime", { value: 0, configurable: true });
 
             // 4. Actually run our function
             const result = await getPokemonListData();
@@ -94,7 +96,7 @@ describe("Pokemon Service", () => {
             expect(result.pokemons[0].types).toEqual(["electric"]);
 
             // Restore delay for other tests
-            (env as any).delayTime = originalDelay;
+            Object.defineProperty(env, "delayTime", { value: originalDelay, configurable: true });
         });
     });
 });

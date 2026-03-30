@@ -2,13 +2,15 @@ import { createBrowserRouter, createRoutesFromElements, Route } from "react-rout
 import App from "@/App";
 import Home from "@pages/Home";
 import Details from "@pages/Details";
+import NotFound from "@pages/NotFound";
 
 
 export const index = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<App />}>
             <Route index element={<Home />} />
-            <Route path='/details' element={<Details />} />
+            <Route path="/details" element={<Details />} />
+            <Route path="*" element={<NotFound />} />
         </Route>
     )
 );

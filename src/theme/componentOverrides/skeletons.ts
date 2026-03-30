@@ -16,7 +16,7 @@ export const skeletonOverrides: Components<Theme> = {
             }),
 
 
-            text: ({ }) => ({
+            text: () => ({
                 transform: "none",
                 marginTop: 0,
                 marginBottom: 0,
