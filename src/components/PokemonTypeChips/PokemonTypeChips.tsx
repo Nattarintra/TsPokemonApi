@@ -11,52 +11,37 @@ interface PokemonTypeChipsProps {
   variant?: "types" | "weaknesses";
 }
 
-const getSizeStyles = (size: ChipSize) => {
-  const styles: Record<
-    ChipSize,
-    { fontSize: string; height: string; padding: string; "& .MuiChip-label": { padding: string } }
-  > = {
+const getSizeStyles = (size: ChipSize) => (theme: Theme) => {
+  const styles = {
     small: {
-      fontSize: "0.75rem",
-      height: "20px",
-      padding: "2px 6px",
-      "& .MuiChip-label": {
-        padding: "0 4px",
-      },
+      fontSize: theme.typography.caption.fontSize,
+      height: theme.spacing(2.5),
+      padding: `${theme.spacing(0.25)} ${theme.spacing(0.75)}`,
+      "& .MuiChip-label": { padding: `0 ${theme.spacing(0.5)}` },
     },
     medium: {
-      fontSize: "0.875rem",
-      height: "28px",
-      padding: "4px 8px",
-      "& .MuiChip-label": {
-        padding: "0 6px",
-      },
+      fontSize: theme.typography.body2.fontSize,
+      height: theme.spacing(3.5),
+      padding: `${theme.spacing(0.5)} ${theme.spacing(1)}`,
+      "& .MuiChip-label": { padding: `0 ${theme.spacing(0.75)}` },
     },
     large: {
-      fontSize: "1rem",
-      height: "38px",
-      padding: "8px 12px",
-      "& .MuiChip-label": {
-        padding: "0 6px",
-      },
+      fontSize: theme.typography.body1.fontSize,
+      height: theme.spacing(4.75),
+      padding: `${theme.spacing(1)} ${theme.spacing(1.5)}`,
+      "& .MuiChip-label": { padding: `0 ${theme.spacing(0.75)}` },
     },
   };
   return styles[size];
 };
 
-const getChipStyles = (size: ChipSize, item: string) => (theme: Theme) => {
-  const sizeStyle = getSizeStyles(size);
-  return {
-    fontSize: sizeStyle.fontSize,
-    height: sizeStyle.height,
-    padding: sizeStyle.padding,
-    "& .MuiChip-label": sizeStyle["& .MuiChip-label"],
-    borderRadius: `${theme.shape.radius.small}px`,
-    textTransform: "capitalize" as const,
-    backgroundColor: pokemonTypeColors[item as PokemonType],
-    color: theme.palette.getContrastText(pokemonTypeColors[item as PokemonType]),
-  };
-};
+const getChipStyles = (size: ChipSize, item: string) => (theme: Theme) => ({
+  ...getSizeStyles(size)(theme),
+  borderRadius: `${theme.shape.radius.small}px`,
+  textTransform: "capitalize" as const,
+  backgroundColor: pokemonTypeColors[item as PokemonType],
+  color: theme.palette.getContrastText(pokemonTypeColors[item as PokemonType]),
+});
 
 const PokemonTypeChips = ({
   items,
