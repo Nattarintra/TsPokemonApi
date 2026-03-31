@@ -1,11 +1,11 @@
 import { TextDecoder, TextEncoder } from "util";
 
 Object.defineProperty(globalThis, "TextEncoder", {
-    value: TextEncoder,
-    writable: true,
+  value: TextEncoder,
+  writable: true,
 });
 
 Object.defineProperty(globalThis, "TextDecoder", {
-    value: TextDecoder,
-    writable: true,
+  value: TextDecoder,
+  writable: true,
 });

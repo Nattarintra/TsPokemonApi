@@ -5,7 +5,7 @@ export const skeleton = {
     containerHeight: 32,
   },
   text: {
-    idWidth: '25%',
-    nameWidth: '70%',
+    idWidth: "25%",
+    nameWidth: "70%",
   },
 };

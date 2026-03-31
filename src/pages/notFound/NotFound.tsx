@@ -7,26 +7,26 @@ import {
   Typography,
   type SxProps,
   type Theme,
-} from '@mui/material';
+} from "@mui/material";
 import SearchOffRoundedIcon from "@mui/icons-material/SearchOffRounded";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import { Link as RouterLink } from "react-router-dom";
 
-type NotFoundStyleKeys = 'page' | 'card' | 'icon' | 'eyebrow' | 'actions';
+type NotFoundStyleKeys = "page" | "card" | "icon" | "eyebrow" | "actions";
 
 const notFoundPageStyles: Record<NotFoundStyleKeys, SxProps<Theme>> = {
   page: (theme) => ({
     minHeight: `calc(100vh - ${theme.spacing(8)})`,
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   }),
   card: (theme) => ({
-    width: '100%',
-    textAlign: 'center',
+    width: "100%",
+    textAlign: "center",
     paddingBlock: theme.spacing(5),
     paddingInline: theme.spacing(3),
     borderRadius: theme.shape.radius.extraSmall,
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up("sm")]: {
       paddingBlock: theme.spacing(7),
       paddingInline: theme.spacing(6),
     },
@@ -34,18 +34,18 @@ const notFoundPageStyles: Record<NotFoundStyleKeys, SxProps<Theme>> = {
   icon: (theme) => ({
     fontSize: theme.spacing(8),
     color: theme.palette.text.primary,
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up("sm")]: {
       fontSize: theme.spacing(10),
     },
   }),
   eyebrow: (theme) => ({
-    letterSpacing: theme.typography.caption?.letterSpacing ?? '0.08em',
-    textTransform: 'uppercase',
+    letterSpacing: theme.typography.caption?.letterSpacing ?? "0.08em",
+    textTransform: "uppercase",
     color: theme.palette.text.secondary,
   }),
   actions: (theme) => ({
     paddingTop: theme.spacing(1),
-    justifyContent: 'center',
+    justifyContent: "center",
   }),
 };
 
@@ -67,7 +67,7 @@ const NotFound = (): ReactElement => {
             </Typography>
           </Stack>
           <Stack
-            direction={{ xs: 'column', sm: 'row' }}
+            direction={{ xs: "column", sm: "row" }}
             spacing={2}
             sx={notFoundPageStyles.actions}
           >

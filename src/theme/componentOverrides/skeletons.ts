@@ -1,4 +1,4 @@
-import type { Components, Theme } from '@mui/material/styles';
+import type { Components, Theme } from "@mui/material/styles";
 
 export const skeletonOverrides: Components<Theme> = {
   MuiSkeleton: {
@@ -16,14 +16,14 @@ export const skeletonOverrides: Components<Theme> = {
       }),
 
       text: () => ({
-        transform: 'none',
+        transform: "none",
         marginTop: 0,
         marginBottom: 0,
       }),
     },
 
     defaultProps: {
-      animation: 'wave',
+      animation: "wave",
     },
   },
 };

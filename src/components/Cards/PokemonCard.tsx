@@ -1,8 +1,8 @@
-import type { ReactElement } from 'react';
-import { CardMedia, Typography, Box } from '@mui/material';
-import PokemonTypeChips from '@/components/PokemonTypeChips/PokemonTypeChips';
-import type { PokemonCardProps } from '@/types/pokemon.type';
-import PokemonCardLayout from './PokemonCardLayout';
+import type { ReactElement } from "react";
+import { CardMedia, Typography, Box } from "@mui/material";
+import PokemonTypeChips from "@/components/PokemonTypeChips/PokemonTypeChips";
+import type { PokemonCardProps } from "@/types/pokemon.type";
+import PokemonCardLayout from "./PokemonCardLayout";
 
 interface PokemonCardExtendedProps extends PokemonCardProps {
   onClick?: () => void;
@@ -23,16 +23,16 @@ const PokemonCard = ({
           component="img"
           image={image}
           alt={name}
-          sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          sx={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       }
       content={
         <>
           <Typography variant="caption" color="text.secondary" fontWeight="bold">
-            #{id.toString().padStart(4, '0')}
+            #{id.toString().padStart(4, "0")}
           </Typography>
 
-          <Typography variant="h2" sx={{ mt: 1, mb: 1, textTransform: 'capitalize' }}>
+          <Typography variant="h2" sx={{ mt: 1, mb: 1, textTransform: "capitalize" }}>
             {name}
           </Typography>
 

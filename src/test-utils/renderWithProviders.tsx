@@ -6,35 +6,31 @@ import { MemoryRouter } from "react-router-dom";
 import { pokemonTheme } from "@/theme/createPokemonTheme";
 
 type RenderWithProvidersOptions = Omit<RenderOptions, "wrapper"> & {
-    initialEntries?: string[];
+  initialEntries?: string[];
 };
 
 export const renderWithProviders = (
-    ui: ReactElement,
-    { initialEntries, ...options }: RenderWithProvidersOptions = {}
+  ui: ReactElement,
+  { initialEntries, ...options }: RenderWithProvidersOptions = {},
 ) => {
-    const queryClient = new QueryClient({
-        defaultOptions: {
-            queries: {
-                retry: false,
-            },
-        },
-    });
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
 
-    const Wrapper = ({
-        children,
-    }: PropsWithChildren) => (
-        <QueryClientProvider client={queryClient}>
-            <ThemeProvider theme={pokemonTheme}>
-                <MemoryRouter initialEntries={initialEntries ?? ["/"]}>
-                    {children}
-                </MemoryRouter>
-            </ThemeProvider>
-        </QueryClientProvider>
-    );
+  const Wrapper = ({ children }: PropsWithChildren) => (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={pokemonTheme}>
+        <MemoryRouter initialEntries={initialEntries ?? ["/"]}>{children}</MemoryRouter>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
 
-    return render(ui, {
-        wrapper: Wrapper,
-        ...options,
-    });
+  return render(ui, {
+    wrapper: Wrapper,
+    ...options,
+  });
 };

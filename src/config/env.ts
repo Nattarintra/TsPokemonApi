@@ -1,7 +1,7 @@
 // src/config/env.ts
 
 function getRequiredEnv(envName: string, envValue: string | undefined): string {
-  if (!envValue || envValue.trim() === '') {
+  if (!envValue || envValue.trim() === "") {
     throw new Error(`Missing environment variable: ${envName}`);
   }
 
@@ -14,11 +14,11 @@ function getOptionalEnv(envValue: string | undefined, fallback: string): string 
 
 function toBoolean(envValue: string | undefined, fallback = false): boolean {
   if (envValue === undefined) return fallback;
-  return envValue === 'true';
+  return envValue === "true";
 }
 
 function toNumber(envValue: string | undefined, fallback: number): number {
-  if (envValue === undefined || envValue.trim() === '') return fallback;
+  if (envValue === undefined || envValue.trim() === "") return fallback;
 
   const parsed = Number(envValue);
 
@@ -29,17 +29,17 @@ function toNumber(envValue: string | undefined, fallback: number): number {
   return parsed;
 }
 
-const processEnv = typeof process !== 'undefined' ? process.env : undefined;
+const processEnv = typeof process !== "undefined" ? process.env : undefined;
 const metaEnv: Partial<Record<keyof ImportMetaEnv, string>> = import.meta.env ?? processEnv ?? {};
 
 export const env = {
-  appName: getRequiredEnv('VITE_APP_NAME', metaEnv.VITE_APP_NAME),
+  appName: getRequiredEnv("VITE_APP_NAME", metaEnv.VITE_APP_NAME),
 
-  apiBaseUrl: getRequiredEnv('VITE_API_BASE_URL', metaEnv.VITE_API_BASE_URL),
+  apiBaseUrl: getRequiredEnv("VITE_API_BASE_URL", metaEnv.VITE_API_BASE_URL),
 
   pokemonImageBaseUrl: getOptionalEnv(
     metaEnv.VITE_POKEMON_IMAGE_BASE_URL,
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
   ),
 
   enableSearch: toBoolean(metaEnv.VITE_ENABLE_SEARCH, true),

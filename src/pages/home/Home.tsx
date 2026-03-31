@@ -49,13 +49,10 @@ const Home = (): ReactElement => {
     <>
       {isFetching && !isLoading && <LinearProgress />}
       {failed > 0 && <ErrorBanner message={getPartialErrorMessage(failed)} variant="inline" />}
-      <Grid container spacing={5} sx={{ width: '80%', margin: '20px auto' }}>
+      <Grid container spacing={5} sx={{ width: "80%", margin: "20px auto" }}>
         {pokemons.map((pokemon: PokemonCardProps) => (
           <Grid key={pokemon.id} size={{ xs: 12, md: 6, lg: 4 }}>
-            <PokemonCard
-              {...pokemon}
-              onClick={() => navigate(`/details/${pokemon.id}`)}
-            />
+            <PokemonCard {...pokemon} onClick={() => navigate(`/details/${pokemon.id}`)} />
           </Grid>
         ))}
       </Grid>

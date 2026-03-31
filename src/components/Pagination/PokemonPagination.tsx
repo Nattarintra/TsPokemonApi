@@ -25,7 +25,7 @@ const PokemonPagination = ({
     <Box
       component="nav"
       aria-label="Pokemon list pagination"
-      sx={{ mt: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}
+      sx={{ mt: 4, display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}
     >
       <Typography variant="body2" aria-live="polite">
         Showing {start} - {end} of {totalItems} Pokémon

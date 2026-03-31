@@ -10,14 +10,14 @@ import { linkOverrides } from "./links";
 import { skeletonOverrides } from "./skeletons";
 
 export const components = {
-    ...baseStylesOverrides,
-    ...cardOverrides,
-    ...buttonOverrides,
-    ...chipOverrides,
-    ...inputOverrides,
-    ...paginationOverrides,
-    ...feedbackOverrides,
-    ...appBarOverrides,
-    ...linkOverrides,
-    ...skeletonOverrides,
+  ...baseStylesOverrides,
+  ...cardOverrides,
+  ...buttonOverrides,
+  ...chipOverrides,
+  ...inputOverrides,
+  ...paginationOverrides,
+  ...feedbackOverrides,
+  ...appBarOverrides,
+  ...linkOverrides,
+  ...skeletonOverrides,
 };

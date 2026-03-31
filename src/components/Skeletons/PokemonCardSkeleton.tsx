@@ -1,11 +1,11 @@
-import { Skeleton, Box, type Theme } from '@mui/material';
-import type { ReactElement } from 'react';
-import PokemonCardLayout from '@/components/Cards/PokemonCardLayout';
-import { skeleton } from '@/theme/tokens/skeleton';
-import SkeletonText from './SkeletonText';
+import { Skeleton, Box, type Theme } from "@mui/material";
+import type { ReactElement } from "react";
+import PokemonCardLayout from "@/components/Cards/PokemonCardLayout";
+import { skeleton } from "@/theme/tokens/skeleton";
+import SkeletonText from "./SkeletonText";
 
 const chipStyles = (theme: Theme) => ({
-  display: 'flex',
+  display: "flex",
   gap: theme.spacing(1),
   marginTop: theme.spacing(1),
   minHeight: skeleton.chip.containerHeight,

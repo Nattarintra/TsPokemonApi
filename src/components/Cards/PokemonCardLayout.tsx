@@ -1,6 +1,6 @@
-import { Card as MuiCard, CardContent, Box } from '@mui/material';
-import type { ReactNode } from 'react';
-import type { SxProps, Theme } from '@mui/material/styles';
+import { Card as MuiCard, CardContent, Box } from "@mui/material";
+import type { ReactNode } from "react";
+import type { SxProps, Theme } from "@mui/material/styles";
 
 interface PokemonCardLayoutProps {
   image: ReactNode;
@@ -10,21 +10,21 @@ interface PokemonCardLayoutProps {
 
 const styles = {
   boxImage: {
-    width: '100%',
-    aspectRatio: '1 / 1',
-    overflow: 'hidden',
+    width: "100%",
+    aspectRatio: "1 / 1",
+    overflow: "hidden",
   },
 
   card:
     (isClickable: boolean): SxProps<Theme> =>
     (theme) => ({
-      cursor: isClickable ? 'pointer' : 'default',
-      transition: theme.transitions.create(['transform', 'boxShadow'], {
+      cursor: isClickable ? "pointer" : "default",
+      transition: theme.transitions.create(["transform", "boxShadow"], {
         duration: theme.transitions.duration.standard,
       }),
-      '&:hover': isClickable
+      "&:hover": isClickable
         ? {
-            transform: 'translateY(-4px)',
+            transform: "translateY(-4px)",
             boxShadow: theme.shadows[6],
           }
         : {},
