@@ -2,6 +2,7 @@ import { Drawer, Box, List, ListItem, ListItemButton, ListItemText } from "@mui/
 import { navLinks } from "./header.config";
 
 import { LinkBehavior } from "@/components/Links/LinkBehavior";
+import { DRAWER_WIDTH } from "@/constants";
 
 interface MobileDrawerProps {
   open: boolean;
@@ -11,7 +12,7 @@ interface MobileDrawerProps {
 const MobileDrawer = ({ open, onClose }: MobileDrawerProps) => {
   return (
     <Drawer anchor="right" open={open} onClose={onClose} aria-label="mobile navigation drawer">
-      <Box sx={{ width: (theme) => theme.spacing(30) }}>
+      <Box sx={{ width: (theme) => theme.spacing(DRAWER_WIDTH) }}>
         <List sx={{ pt: 2 }}>
           {navLinks.map((link) => (
             <ListItem key={link.path} disablePadding>

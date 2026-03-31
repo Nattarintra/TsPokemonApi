@@ -6,4 +6,4 @@ const HEADER_LABELS = {
 export const navLinks = [
   { label: HEADER_LABELS.HOME_TITLE, path: "/" },
   { label: HEADER_LABELS.FAVORITES_TITLE, path: "/favorites" },
-];
+] as const;
