@@ -12,9 +12,45 @@ type HomeQueryState = {
   isFetching: boolean;
 };
 
+type UsePokemonPaginationResult = {
+  currentPage: number;
+  paginatedPokemons: PokemonCardProps[];
+  totalItems: number;
+  handlePageChange: (page: number) => void;
+};
+
+type PokemonPaginationProps = {
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  onPageChange: (page: number) => void;
+};
+
 const mockUsePokemonListQuery = jest.fn<() => HomeQueryState>();
 const mockPokemonCard =
   jest.fn<(props: PokemonCardProps & { onClick?: () => void }) => ReactElement>();
+const mockUsePokemonPagination =
+  jest.fn<(pokemons: PokemonCardProps[]) => UsePokemonPaginationResult>();
+const mockPokemonPagination = jest.fn<(props: PokemonPaginationProps) => ReactElement | null>();
+
+jest.unstable_mockModule("@/config", () => ({
+  env: { pageSize: 12 },
+}));
+
+jest.unstable_mockModule("@/hooks/usePokemonPagination", () => ({
+  usePokemonPagination: (pokemons: PokemonCardProps[]) => mockUsePokemonPagination(pokemons),
+}));
+
+jest.unstable_mockModule("@/components/Pagination/PokemonPagination", () => ({
+  default: (props: PokemonPaginationProps) => {
+    mockPokemonPagination(props);
+    return (
+      <button data-testid="go-to-page-2" onClick={() => props.onPageChange(2)}>
+        page 2
+      </button>
+    );
+  },
+}));
 
 jest.unstable_mockModule("@/hooks/usePokemonListQuery", () => ({
   usePokemonListQuery: mockUsePokemonListQuery,
@@ -57,6 +93,12 @@ jest.unstable_mockModule("@/components/Errors/ErrorBanner", () => ({
 let Home: (typeof import("@/pages/home/Home"))["default"];
 
 beforeAll(async () => {
+  mockUsePokemonPagination.mockImplementation((pokemons) => ({
+    currentPage: 1,
+    paginatedPokemons: pokemons,
+    totalItems: pokemons.length,
+    handlePageChange: jest.fn(),
+  }));
   const module = await import("@/pages/home/Home");
   Home = module.default;
 });
@@ -205,5 +247,48 @@ describe("Home page", () => {
 
     expect(screen.getByRole("progressbar")).toBeTruthy();
     expect(screen.getAllByTestId("pokemon-card")).toHaveLength(1);
+  });
+});
+
+describe("Home page — PokemonPagination", () => {
+  it("passes currentPage, pageSize, and totalItems to PokemonPagination", () => {
+    mockUsePokemonPagination.mockReturnValue({
+      currentPage: 2,
+      paginatedPokemons: [createPokemon()],
+      totalItems: 20,
+      handlePageChange: jest.fn(),
+    });
+    mockUsePokemonListQuery.mockReturnValue(
+      createQueryState({ data: { pokemons: [createPokemon()], failed: 0 } }),
+    );
+
+    renderWithProviders(<Home />);
+
+    expect(mockPokemonPagination).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: 2,
+        pageSize: 12,
+        totalItems: 20,
+      }),
+    );
+  });
+
+  it("wires onPageChange from PokemonPagination to the hook's handlePageChange", () => {
+    const handlePageChange = jest.fn();
+    mockUsePokemonPagination.mockReturnValue({
+      currentPage: 1,
+      paginatedPokemons: [createPokemon()],
+      totalItems: 20,
+      handlePageChange,
+    });
+    mockUsePokemonListQuery.mockReturnValue(
+      createQueryState({ data: { pokemons: [createPokemon()], failed: 0 } }),
+    );
+
+    renderWithProviders(<Home />);
+
+    fireEvent.click(screen.getByTestId("go-to-page-2"));
+
+    expect(handlePageChange).toHaveBeenCalledWith(2);
   });
 });

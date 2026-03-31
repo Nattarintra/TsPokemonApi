@@ -27,7 +27,10 @@ const styles = {
             transform: "translateY(-4px)",
             boxShadow: theme.shadows[6],
           }
-        : {},
+        : {
+            transform: "none",
+            boxShadow: "none",
+          },
     }),
 };
 

@@ -1,5 +1,5 @@
 import { Box, Pagination as MuiPagination, Typography } from "@mui/material";
-import type { ReactElement } from "react";
+import type { ChangeEvent, ReactElement } from "react";
 import type { PokemonPaginationProps } from "@/types/interfaces";
 
 const PokemonPagination = ({
@@ -17,7 +17,7 @@ const PokemonPagination = ({
   const start = (currentPage - 1) * pageSize + 1;
   const end = Math.min(currentPage * pageSize, totalItems);
 
-  const handleChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+  const handleChange = (_event: ChangeEvent<unknown>, page: number) => {
     onPageChange(page);
   };
 
