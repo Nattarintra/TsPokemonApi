@@ -2,12 +2,14 @@ import { usePokemonListQuery } from "@/hooks/usePokemonListQuery";
 import PokemonCard from "@/components/Cards/PokemonCard";
 import { Grid, LinearProgress } from "@mui/material";
 import type { ReactElement } from "react";
+import { useNavigate } from "react-router-dom";
 import ErrorBanner from "@/components/Errors/ErrorBanner";
 import { getUserErrorMessage, getPartialErrorMessage } from "@/errors/getErrorMessages";
 import PokemonGridSkeleton from "@/components/Skeletons/PokemonGridSkeleton";
 import type { PokemonCardProps, PokemonListResult } from "@/types/pokemon.type";
 
 const Home = (): ReactElement => {
+  const navigate = useNavigate();
   const { data, isLoading, error, refetch, isFetching } = usePokemonListQuery();
 
   // Safe fallback with type assertion
@@ -50,7 +52,10 @@ const Home = (): ReactElement => {
       <Grid container spacing={5} sx={{ width: '80%', margin: '20px auto' }}>
         {pokemons.map((pokemon: PokemonCardProps) => (
           <Grid key={pokemon.id} size={{ xs: 12, md: 6, lg: 4 }}>
-            <PokemonCard {...pokemon} />
+            <PokemonCard
+              {...pokemon}
+              onClick={() => navigate(`/details/${pokemon.id}`)}
+            />
           </Grid>
         ))}
       </Grid>

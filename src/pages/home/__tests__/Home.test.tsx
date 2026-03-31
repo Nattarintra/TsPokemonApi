@@ -1,8 +1,8 @@
-import type { ReactElement } from "react";
-import { afterEach, beforeAll, describe, expect, it, jest } from "@jest/globals";
-import { fireEvent, screen } from "@testing-library/react";
-import type { PokemonCardProps, PokemonListResult } from "@/types/pokemon.type";
-import { renderWithProviders } from "@/test-utils/renderWithProviders";
+import type { ReactElement } from 'react';
+import { afterEach, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { fireEvent, screen } from '@testing-library/react';
+import type { PokemonCardProps, PokemonListResult } from '@/types/pokemon.type';
+import { renderWithProviders } from '@/test-utils/renderWithProviders';
 
 type HomeQueryState = {
   data?: PokemonListResult;
@@ -13,24 +13,25 @@ type HomeQueryState = {
 };
 
 const mockUsePokemonListQuery = jest.fn<() => HomeQueryState>();
-const mockPokemonCard = jest.fn<(props: PokemonCardProps) => ReactElement>();
+const mockPokemonCard =
+  jest.fn<(props: PokemonCardProps & { onClick?: () => void }) => ReactElement>();
 
-jest.unstable_mockModule("@/hooks/usePokemonListQuery", () => ({
+jest.unstable_mockModule('@/hooks/usePokemonListQuery', () => ({
   usePokemonListQuery: mockUsePokemonListQuery,
 }));
 
-jest.unstable_mockModule("@/components/Cards/PokemonCard", () => ({
-  default: (props: PokemonCardProps) => {
+jest.unstable_mockModule('@/components/Cards/PokemonCard', () => ({
+  default: (props: PokemonCardProps & { onClick?: () => void }) => {
     mockPokemonCard(props);
     return <div data-testid="pokemon-card">{props.name}</div>;
   },
 }));
 
-jest.unstable_mockModule("@/components/Skeletons/PokemonGridSkeleton", () => ({
+jest.unstable_mockModule('@/components/Skeletons/PokemonGridSkeleton', () => ({
   default: () => <div data-testid="pokemon-grid-skeleton">Loading grid</div>,
 }));
 
-jest.unstable_mockModule("@/components/Errors/ErrorBanner", () => ({
+jest.unstable_mockModule('@/components/Errors/ErrorBanner', () => ({
   default: ({
     message,
     onRetry,
@@ -53,10 +54,10 @@ jest.unstable_mockModule("@/components/Errors/ErrorBanner", () => ({
   ),
 }));
 
-let Home: (typeof import("@/pages/home/Home"))["default"];
+let Home: (typeof import('@/pages/home/Home'))['default'];
 
 beforeAll(async () => {
-  const module = await import("@/pages/home/Home");
+  const module = await import('@/pages/home/Home');
   Home = module.default;
 });
 
@@ -160,8 +161,24 @@ describe('Home page', () => {
     renderWithProviders(<Home />);
 
     expect(screen.getAllByTestId('pokemon-card')).toHaveLength(2);
-    expect(mockPokemonCard).toHaveBeenNthCalledWith(1, firstPokemon);
-    expect(mockPokemonCard).toHaveBeenNthCalledWith(2, secondPokemon);
+    expect(mockPokemonCard).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        id: firstPokemon.id,
+        name: firstPokemon.name,
+        image: firstPokemon.image,
+        types: firstPokemon.types,
+      }),
+    );
+    expect(mockPokemonCard).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        id: secondPokemon.id,
+        name: secondPokemon.name,
+        image: secondPokemon.image,
+        types: secondPokemon.types,
+      }),
+    );
   });
 
   it('renders an inline partial-error banner when some pokemon still load', () => {
