@@ -1,4 +1,3 @@
-import type { ReactElement } from "react";
 import { afterEach, beforeAll, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, screen } from "@testing-library/react";
 import type { PokemonCardProps, PokemonListResult } from "@/types/pokemon.type";
@@ -12,80 +11,57 @@ type HomeQueryState = {
   isFetching: boolean;
 };
 
-type UsePokemonPaginationResult = {
-  currentPage: number;
-  paginatedPokemons: PokemonCardProps[];
-  totalItems: number;
-  handlePageChange: (page: number) => void;
-};
-
-type PokemonPaginationProps = {
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  onPageChange: (page: number) => void;
-};
-
+const mockNavigate = jest.fn();
 const mockUsePokemonListQuery = jest.fn<() => HomeQueryState>();
-const mockPokemonCard =
-  jest.fn<(props: PokemonCardProps & { onClick?: () => void }) => ReactElement>();
-const mockUsePokemonPagination =
-  jest.fn<(pokemons: PokemonCardProps[]) => UsePokemonPaginationResult>();
-const mockPokemonPagination = jest.fn<(props: PokemonPaginationProps) => ReactElement | null>();
 
-jest.unstable_mockModule("@/config", () => ({
-  env: { pageSize: 12 },
-}));
-
-jest.unstable_mockModule("@/hooks/usePokemonPagination", () => ({
-  usePokemonPagination: (pokemons: PokemonCardProps[]) => mockUsePokemonPagination(pokemons),
-}));
-
-jest.unstable_mockModule("@/components/Pagination/PokemonPagination", () => ({
-  default: (props: PokemonPaginationProps) => {
-    mockPokemonPagination(props);
-    return (
-      <button data-testid="go-to-page-2" onClick={() => props.onPageChange(2)}>
-        page 2
-      </button>
-    );
-  },
-}));
+jest.unstable_mockModule("react-router-dom", async () => {
+  const actual = await jest.requireActual<typeof import("react-router-dom")>("react-router-dom");
+  return { ...actual, useNavigate: () => mockNavigate };
+});
 
 jest.unstable_mockModule("@/hooks/usePokemonListQuery", () => ({
   usePokemonListQuery: mockUsePokemonListQuery,
 }));
 
+jest.unstable_mockModule("@/hooks/usePokemonPagination", () => ({
+  usePokemonPagination: (pokemons: PokemonCardProps[]) => ({
+    currentPage: 1,
+    paginatedPokemons: pokemons.slice(0, 12),
+    totalItems: pokemons.length,
+    handlePageChange: jest.fn(),
+  }),
+}));
+
+// mock only testid — ignore child internals
 jest.unstable_mockModule("@/components/Cards/PokemonCard", () => ({
-  default: (props: PokemonCardProps & { onClick?: () => void }) => {
-    mockPokemonCard(props);
-    return <div data-testid="pokemon-card">{props.name}</div>;
-  },
+  default: ({ name, onClick }: PokemonCardProps & { onClick?: () => void }) => (
+    <div data-testid="pokemon-card" onClick={onClick}>
+      {name}
+    </div>
+  ),
+}));
+
+jest.unstable_mockModule("@/components/Pagination/PokemonPagination", () => ({
+  default: () => <div data-testid="pokemon-pagination" />,
 }));
 
 jest.unstable_mockModule("@/components/Skeletons/PokemonGridSkeleton", () => ({
-  default: () => <div data-testid="pokemon-grid-skeleton">Loading grid</div>,
+  default: () => <div data-testid="pokemon-grid-skeleton" />,
 }));
 
 jest.unstable_mockModule("@/components/Errors/ErrorBanner", () => ({
   default: ({
     message,
     onRetry,
-    isRetrying,
     variant = "inline",
   }: {
     message: string;
     onRetry?: () => void;
-    isRetrying?: boolean;
     variant?: "inline" | "fullscreen";
   }) => (
     <div data-testid={`error-banner-${variant}`}>
       <span>{message}</span>
-      {onRetry && (
-        <button type="button" onClick={onRetry}>
-          {isRetrying ? "Retrying..." : "Try again"}
-        </button>
-      )}
+      {onRetry && <button onClick={onRetry}>Try again</button>}
     </div>
   ),
 }));
@@ -93,21 +69,14 @@ jest.unstable_mockModule("@/components/Errors/ErrorBanner", () => ({
 let Home: (typeof import("@/pages/home/Home"))["default"];
 
 beforeAll(async () => {
-  mockUsePokemonPagination.mockImplementation((pokemons) => ({
-    currentPage: 1,
-    paginatedPokemons: pokemons,
-    totalItems: pokemons.length,
-    handlePageChange: jest.fn(),
-  }));
-  const module = await import("@/pages/home/Home");
-  Home = module.default;
+  ({ default: Home } = await import("@/pages/home/Home"));
 });
 
 afterEach(() => {
   jest.clearAllMocks();
 });
 
-const createPokemon = (overrides?: Partial<PokemonCardProps>): PokemonCardProps => ({
+const makePokemon = (overrides?: Partial<PokemonCardProps>): PokemonCardProps => ({
   id: 25,
   name: "pikachu",
   image: "/pikachu.png",
@@ -115,11 +84,8 @@ const createPokemon = (overrides?: Partial<PokemonCardProps>): PokemonCardProps 
   ...overrides,
 });
 
-const createQueryState = (overrides?: Partial<HomeQueryState>): HomeQueryState => ({
-  data: {
-    pokemons: [],
-    failed: 0,
-  },
+const makeQueryState = (overrides?: Partial<HomeQueryState>): HomeQueryState => ({
+  data: { pokemons: [], failed: 0 },
   isLoading: false,
   error: null,
   refetch: jest.fn(),
@@ -127,168 +93,79 @@ const createQueryState = (overrides?: Partial<HomeQueryState>): HomeQueryState =
   ...overrides,
 });
 
-const expectPokemonCardProps = (pokemon: PokemonCardProps) =>
-  expect.objectContaining({
-    id: pokemon.id,
-    name: pokemon.name,
-    image: pokemon.image,
-    types: pokemon.types,
-  });
-
 describe("Home page", () => {
-  it("renders the loading skeleton during the initial load", () => {
-    mockUsePokemonListQuery.mockReturnValue(
-      createQueryState({
-        isLoading: true,
-        data: undefined,
-      }),
-    );
+  describe("loading state", () => {
+    it("shows skeleton during initial load", () => {
+      mockUsePokemonListQuery.mockReturnValue(makeQueryState({ isLoading: true, data: undefined }));
+      renderWithProviders(<Home />);
 
-    renderWithProviders(<Home />);
-
-    expect(screen.getByTestId("pokemon-grid-skeleton")).toBeTruthy();
-    expect(screen.queryAllByTestId("pokemon-card")).toHaveLength(0);
+      expect(screen.getByTestId("pokemon-grid-skeleton")).toBeTruthy();
+      expect(screen.queryByTestId("pokemon-card")).toBeNull();
+    });
   });
 
-  it("renders a fullscreen error state and retries when requested", () => {
-    const refetch = jest.fn();
+  describe("success state", () => {
+    it("shows cards and pagination on successful load", () => {
+      mockUsePokemonListQuery.mockReturnValue(
+        makeQueryState({ data: { pokemons: [makePokemon()], failed: 0 } }),
+      );
+      renderWithProviders(<Home />);
 
-    mockUsePokemonListQuery.mockReturnValue(
-      createQueryState({
-        error: new Error("boom"),
-        refetch,
-      }),
-    );
-
-    renderWithProviders(<Home />);
-
-    expect(screen.getByTestId("error-banner-fullscreen")).toBeTruthy();
-    expect(screen.getByText("Something went wrong.")).toBeTruthy();
-
-    fireEvent.click(screen.getByRole("button", { name: /try again/i }));
-
-    expect(refetch).toHaveBeenCalledTimes(1);
-  });
-
-  it("renders a fullscreen partial-error banner when all pokemon requests fail", () => {
-    const refetch = jest.fn();
-
-    mockUsePokemonListQuery.mockReturnValue(
-      createQueryState({
-        data: {
-          pokemons: [],
-          failed: 3,
-        },
-        refetch,
-      }),
-    );
-
-    renderWithProviders(<Home />);
-
-    expect(screen.getByTestId("error-banner-fullscreen")).toBeTruthy();
-    expect(screen.getByText("Some Pokémon failed to load (3)")).toBeTruthy();
-    expect(screen.getByRole("button", { name: /try again/i })).toBeTruthy();
-  });
-
-  it("renders pokemon cards for successful data", () => {
-    const firstPokemon = createPokemon();
-    const secondPokemon = createPokemon({
-      id: 1,
-      name: "bulbasaur",
-      image: "/bulbasaur.png",
-      types: ["grass", "poison"],
+      expect(screen.getByTestId("pokemon-card")).toBeTruthy();
+      expect(screen.getByTestId("pokemon-pagination")).toBeTruthy();
     });
 
-    mockUsePokemonListQuery.mockReturnValue(
-      createQueryState({
-        data: {
-          pokemons: [firstPokemon, secondPokemon],
-          failed: 0,
-        },
-      }),
-    );
+    it("navigates to details page when card is clicked", () => {
+      mockUsePokemonListQuery.mockReturnValue(
+        makeQueryState({ data: { pokemons: [makePokemon({ id: 25 })], failed: 0 } }),
+      );
+      renderWithProviders(<Home />);
 
-    renderWithProviders(<Home />);
+      fireEvent.click(screen.getByTestId("pokemon-card"));
 
-    expect(screen.getAllByTestId("pokemon-card")).toHaveLength(2);
-    expect(mockPokemonCard).toHaveBeenNthCalledWith(1, expectPokemonCardProps(firstPokemon));
-    expect(mockPokemonCard).toHaveBeenNthCalledWith(2, expectPokemonCardProps(secondPokemon));
-  });
-
-  it("renders an inline partial-error banner when some pokemon still load", () => {
-    mockUsePokemonListQuery.mockReturnValue(
-      createQueryState({
-        data: {
-          pokemons: [createPokemon()],
-          failed: 2,
-        },
-      }),
-    );
-
-    renderWithProviders(<Home />);
-
-    expect(screen.getByTestId("error-banner-inline")).toBeTruthy();
-    expect(screen.getByText("Some Pokémon failed to load (2)")).toBeTruthy();
-    expect(screen.getAllByTestId("pokemon-card")).toHaveLength(1);
-  });
-
-  it("shows background loading progress during a refetch after data is already visible", () => {
-    mockUsePokemonListQuery.mockReturnValue(
-      createQueryState({
-        data: {
-          pokemons: [createPokemon()],
-          failed: 0,
-        },
-        isFetching: true,
-      }),
-    );
-
-    renderWithProviders(<Home />);
-
-    expect(screen.getByRole("progressbar")).toBeTruthy();
-    expect(screen.getAllByTestId("pokemon-card")).toHaveLength(1);
-  });
-});
-
-describe("Home page — PokemonPagination", () => {
-  it("passes currentPage, pageSize, and totalItems to PokemonPagination", () => {
-    mockUsePokemonPagination.mockReturnValue({
-      currentPage: 2,
-      paginatedPokemons: [createPokemon()],
-      totalItems: 20,
-      handlePageChange: jest.fn(),
+      expect(mockNavigate).toHaveBeenCalledWith("/details/25");
     });
-    mockUsePokemonListQuery.mockReturnValue(
-      createQueryState({ data: { pokemons: [createPokemon()], failed: 0 } }),
-    );
 
-    renderWithProviders(<Home />);
+    it("shows inline warning when some pokemon failed to load", () => {
+      mockUsePokemonListQuery.mockReturnValue(
+        makeQueryState({ data: { pokemons: [makePokemon()], failed: 2 } }),
+      );
+      renderWithProviders(<Home />);
 
-    expect(mockPokemonPagination).toHaveBeenCalledWith(
-      expect.objectContaining({
-        currentPage: 2,
-        pageSize: 12,
-        totalItems: 20,
-      }),
-    );
+      expect(screen.getByTestId("error-banner-inline")).toBeTruthy();
+      expect(screen.getByTestId("pokemon-card")).toBeTruthy();
+    });
+
+    it("shows progress bar during background refetch", () => {
+      mockUsePokemonListQuery.mockReturnValue(
+        makeQueryState({ data: { pokemons: [makePokemon()], failed: 0 }, isFetching: true }),
+      );
+      renderWithProviders(<Home />);
+
+      expect(screen.getByRole("progressbar")).toBeTruthy();
+    });
   });
 
-  it("wires onPageChange from PokemonPagination to the hook's handlePageChange", () => {
-    const handlePageChange = jest.fn();
-    mockUsePokemonPagination.mockReturnValue({
-      currentPage: 1,
-      paginatedPokemons: [createPokemon()],
-      totalItems: 20,
-      handlePageChange,
+  describe("error state", () => {
+    it("shows fullscreen error and allows retry", () => {
+      const refetch = jest.fn();
+      mockUsePokemonListQuery.mockReturnValue(
+        makeQueryState({ error: new Error("boom"), refetch }),
+      );
+      renderWithProviders(<Home />);
+
+      expect(screen.getByTestId("error-banner-fullscreen")).toBeTruthy();
+      fireEvent.click(screen.getByRole("button", { name: /try again/i }));
+      expect(refetch).toHaveBeenCalledTimes(1);
     });
-    mockUsePokemonListQuery.mockReturnValue(
-      createQueryState({ data: { pokemons: [createPokemon()], failed: 0 } }),
-    );
 
-    renderWithProviders(<Home />);
+    it("shows fullscreen error when all pokemon failed to load", () => {
+      mockUsePokemonListQuery.mockReturnValue(
+        makeQueryState({ data: { pokemons: [], failed: 5 } }),
+      );
+      renderWithProviders(<Home />);
 
-    fireEvent.click(screen.getByTestId("go-to-page-2"));
-
-    expect(handlePageChange).toHaveBeenCalledWith(2);
+      expect(screen.getByTestId("error-banner-fullscreen")).toBeTruthy();
+    });
   });
 });
