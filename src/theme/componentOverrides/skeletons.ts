@@ -1,30 +1,29 @@
-import type { Components, Theme } from "@mui/material/styles";
+import type { Components, Theme } from '@mui/material/styles';
 
 export const skeletonOverrides: Components<Theme> = {
-    MuiSkeleton: {
-        styleOverrides: {
-            root: ({ theme }) => ({
-                borderRadius: theme.shape.borderRadius,
-            }),
+  MuiSkeleton: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        borderRadius: theme.shape.borderRadius,
+      }),
 
-            rectangular: ({ theme }) => ({
-                borderRadius: theme.shape.radius.none,
-            }),
+      rectangular: ({ theme }) => ({
+        borderRadius: theme.shape.radius.none,
+      }),
 
-            rounded: ({ theme }) => ({
-                borderRadius: theme.shape.radius.full,
-            }),
+      rounded: ({ theme }) => ({
+        borderRadius: theme.shape.radius.small,
+      }),
 
-
-            text: () => ({
-                transform: "none",
-                marginTop: 0,
-                marginBottom: 0,
-            }),
-        },
-
-        defaultProps: {
-            animation: "wave",
-        },
+      text: () => ({
+        transform: 'none',
+        marginTop: 0,
+        marginBottom: 0,
+      }),
     },
+
+    defaultProps: {
+      animation: 'wave',
+    },
+  },
 };

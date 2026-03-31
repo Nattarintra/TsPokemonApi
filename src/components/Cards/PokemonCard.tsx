@@ -1,46 +1,12 @@
 import type { ReactElement } from 'react';
-import {
-  Card as MuiCard,
-  CardMedia,
-  CardContent,
-  Typography,
-  Box,
-  Chip,
-  type SxProps,
-} from '@mui/material';
-import type { Theme } from '@mui/material/styles';
-import { pokemonTypeColors, type PokemonType } from '@/theme/tokens';
+import { CardMedia, Typography, Box } from '@mui/material';
+import PokemonTypeChips from '@/components/PokemonTypeChips/PokemonTypeChips';
 import type { PokemonCardProps } from '@/types/pokemon.type';
+import PokemonCardLayout from './PokemonCardLayout';
 
 interface PokemonCardExtendedProps extends PokemonCardProps {
   onClick?: () => void;
 }
-
-const pokemonCardStyles = {
-  typeBackgroundColor:
-    (type: PokemonType): SxProps<Theme> =>
-    (theme) => ({
-      textTransform: 'capitalize',
-      backgroundColor: pokemonTypeColors[type],
-      color: theme.palette.getContrastText(pokemonTypeColors[type]),
-    }),
-
-  boxImage: {
-    width: '100%',
-    aspectRatio: '1 / 1',
-    overflow: 'hidden',
-  },
-
-  card:
-    (isClickable: boolean): SxProps<Theme> =>
-    (theme) => ({
-      cursor: isClickable ? 'pointer' : 'default',
-      transition: theme.transitions.create(['transform', 'boxShadow'], {
-        duration: theme.transitions.duration.standard,
-      }),
-      '&:hover': isClickable ? { transform: 'translateY(-4px)', boxShadow: theme.shadows[6] } : {},
-    }),
-};
 
 const PokemonCard = ({
   id,
@@ -50,29 +16,32 @@ const PokemonCard = ({
   onClick,
 }: PokemonCardExtendedProps): ReactElement => {
   return (
-    <MuiCard onClick={onClick} sx={pokemonCardStyles.card(!!onClick)}>
-      <Box sx={pokemonCardStyles.boxImage}>
-        <CardMedia component="img" image={image} alt={name} />
-      </Box>
+    <PokemonCardLayout
+      onClick={onClick}
+      image={
+        <CardMedia
+          component="img"
+          image={image}
+          alt={name}
+          sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      }
+      content={
+        <>
+          <Typography variant="caption" color="text.secondary" fontWeight="bold">
+            #{id.toString().padStart(4, '0')}
+          </Typography>
 
-      <CardContent>
-        <Typography variant="caption" color="text.secondary">
-          #{id.toString().padStart(4, '0')}
-        </Typography>
-        <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
-          {name}
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-          {types.map((type) => (
-            <Chip
-              key={type}
-              label={type}
-              sx={pokemonCardStyles.typeBackgroundColor(type as PokemonType)}
-            />
-          ))}
-        </Box>
-      </CardContent>
-    </MuiCard>
+          <Typography variant="h2" sx={{ mt: 1, mb: 1, textTransform: 'capitalize' }}>
+            {name}
+          </Typography>
+
+          <Box sx={{ mt: 1 }}>
+            <PokemonTypeChips items={types} size="medium" variant="types" />
+          </Box>
+        </>
+      }
+    />
   );
 };
 

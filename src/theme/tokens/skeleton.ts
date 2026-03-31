@@ -1,10 +1,11 @@
 export const skeleton = {
-    chip: {
-        width: 50,
-        height: 24,
-    },
-    text: {
-        idWidth: "30%",
-        nameWidth: "60%",
-    },
+  chip: {
+    width: 60,
+    height: 28,
+    containerHeight: 32,
+  },
+  text: {
+    idWidth: '25%',
+    nameWidth: '70%',
+  },
 };
