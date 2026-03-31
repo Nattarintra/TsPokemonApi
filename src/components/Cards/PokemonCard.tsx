@@ -30,6 +30,16 @@ const pokemonCardStyles = {
     aspectRatio: '1 / 1',
     overflow: 'hidden',
   },
+
+  card:
+    (isClickable: boolean): SxProps<Theme> =>
+    (theme) => ({
+      cursor: isClickable ? 'pointer' : 'default',
+      transition: theme.transitions.create(['transform', 'boxShadow'], {
+        duration: theme.transitions.duration.standard,
+      }),
+      '&:hover': isClickable ? { transform: 'translateY(-4px)', boxShadow: theme.shadows[6] } : {},
+    }),
 };
 
 const PokemonCard = ({
@@ -40,14 +50,7 @@ const PokemonCard = ({
   onClick,
 }: PokemonCardExtendedProps): ReactElement => {
   return (
-    <MuiCard
-      onClick={onClick}
-      sx={{
-        cursor: onClick ? 'pointer' : 'default',
-        transition: 'all 0.3s ease',
-        '&:hover': onClick ? { transform: 'translateY(-4px)', boxShadow: 6 } : {},
-      }}
-    >
+    <MuiCard onClick={onClick} sx={pokemonCardStyles.card(!!onClick)}>
       <Box sx={pokemonCardStyles.boxImage}>
         <CardMedia component="img" image={image} alt={name} />
       </Box>

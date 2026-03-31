@@ -85,6 +85,14 @@ const createQueryState = (overrides?: Partial<HomeQueryState>): HomeQueryState =
   ...overrides,
 });
 
+const expectPokemonCardProps = (pokemon: PokemonCardProps) =>
+  expect.objectContaining({
+    id: pokemon.id,
+    name: pokemon.name,
+    image: pokemon.image,
+    types: pokemon.types,
+  });
+
 describe('Home page', () => {
   it('renders the loading skeleton during the initial load', () => {
     mockUsePokemonListQuery.mockReturnValue(
@@ -161,24 +169,8 @@ describe('Home page', () => {
     renderWithProviders(<Home />);
 
     expect(screen.getAllByTestId('pokemon-card')).toHaveLength(2);
-    expect(mockPokemonCard).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({
-        id: firstPokemon.id,
-        name: firstPokemon.name,
-        image: firstPokemon.image,
-        types: firstPokemon.types,
-      }),
-    );
-    expect(mockPokemonCard).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        id: secondPokemon.id,
-        name: secondPokemon.name,
-        image: secondPokemon.image,
-        types: secondPokemon.types,
-      }),
-    );
+    expect(mockPokemonCard).toHaveBeenNthCalledWith(1, expectPokemonCardProps(firstPokemon));
+    expect(mockPokemonCard).toHaveBeenNthCalledWith(2, expectPokemonCardProps(secondPokemon));
   });
 
   it('renders an inline partial-error banner when some pokemon still load', () => {
