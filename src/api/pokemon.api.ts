@@ -22,7 +22,7 @@ export const fetchPokemonDetails = async (
   results: PokemonListItem[],
 ): Promise<{ pokemons: Pokemon[]; failed: number }> => {
   const { success, failed } = await safePromiseAll(
-    results.map((p) => fetchWithErrorHandling(p.url)),
+    results.map((p) => fetchWithErrorHandling<Pokemon>(p.url)),
   );
 
   return {
