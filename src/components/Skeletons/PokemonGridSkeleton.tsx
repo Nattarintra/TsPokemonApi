@@ -9,15 +9,15 @@ const pokemonGridSkeletonStyles: Record<"grid", SxProps<Theme>> = {
     maxWidth: GRID_MAX_WIDTH,
     mx: "auto",
     px: { xs: 2, sm: 3 },
-    mt: { xs: 2, sm: 3 },
-  } satisfies SxProps<Theme>,
+    // mt: { xs: 2, sm: 3 },
+  },
 };
 
 const PokemonGridSkeleton = (): ReactElement => {
   return (
     <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} sx={pokemonGridSkeletonStyles.grid}>
       {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
-        <Grid key={index} size={{ xs: 12, md: 6, lg: 4 }}>
+        <Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
           <PokemonCardSkeleton />
         </Grid>
       ))}

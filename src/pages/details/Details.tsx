@@ -1,5 +1,11 @@
+import PageContainer from "@/components/Layout/PageContainer";
+
 const Details = () => {
-  return <div>Details page goes here!</div>;
+  return (
+    <PageContainer>
+      <div>Details page goes here!</div>
+    </PageContainer>
+  );
 };
 
 export default Details;

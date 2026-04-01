@@ -12,7 +12,7 @@ interface MobileDrawerProps {
 const MobileDrawer = ({ open, onClose }: MobileDrawerProps) => {
   return (
     <Drawer anchor="right" open={open} onClose={onClose} aria-label="mobile navigation drawer">
-      <Box sx={{ width: (theme) => theme.spacing(DRAWER_WIDTH) }}>
+      <Box sx={{ width: DRAWER_WIDTH }}>
         <List sx={{ pt: 2 }}>
           {navLinks.map((link) => (
             <ListItem key={link.path} disablePadding>

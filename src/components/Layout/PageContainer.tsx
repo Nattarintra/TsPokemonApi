@@ -14,7 +14,7 @@ const pageContainerStyles: Record<"root", SxProps<Theme>> = {
     maxWidth: GRID_MAX_WIDTH,
     mx: "auto",
     px: { xs: 2, sm: 3 },
-    mt: { xs: 2, sm: 3 },
+    //mt: { xs: 2, sm: 3 },
   },
 };
 
