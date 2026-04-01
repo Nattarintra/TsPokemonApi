@@ -1,28 +1,16 @@
 import { usePokemonListQuery } from "@/hooks/usePokemonListQuery";
 import PokemonCard from "@/components/Cards/PokemonCard";
-import { Grid, LinearProgress, type SxProps, type Theme } from "@mui/material";
+import { Grid, LinearProgress } from "@mui/material";
 import type { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import ErrorBanner from "@/components/Errors/ErrorBanner";
 import { getUserErrorMessage, getPartialErrorMessage } from "@/errors/getErrorMessages";
 import PokemonGridSkeleton from "@/components/Skeletons/PokemonGridSkeleton";
 import type { PokemonCardProps, PokemonListResult } from "@/types/pokemon.type";
-import { GRID_MAX_WIDTH } from "@/constants";
 import PokemonPagination from "@/components/Pagination/PokemonPagination";
 import { env } from "@/config";
 import { usePokemonPagination } from "@/hooks/usePokemonPagination";
-
-type HomeStyleKeys = "grid";
-
-const homeStyles: Record<HomeStyleKeys, SxProps<Theme>> = {
-  grid: {
-    width: "100%",
-    maxWidth: GRID_MAX_WIDTH,
-    mx: "auto",
-    px: { xs: 2, sm: 3 },
-    mt: { xs: 2, sm: 3 },
-  } satisfies SxProps<Theme>,
-};
+import PageContainer from "@/components/Layout/PageContainer";
 
 const Home = (): ReactElement => {
   const navigate = useNavigate();
@@ -65,10 +53,10 @@ const Home = (): ReactElement => {
 
   // 4. Success + partial error
   return (
-    <>
+    <PageContainer>
       {isFetching && !isLoading && <LinearProgress />}
       {failed > 0 && <ErrorBanner message={getPartialErrorMessage(failed)} variant="inline" />}
-      <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} sx={homeStyles.grid}>
+      <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
         {paginatedPokemons.map((pokemon: PokemonCardProps) => (
           <Grid key={pokemon.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <PokemonCard {...pokemon} onClick={() => navigate(`/details/${pokemon.id}`)} />
@@ -81,7 +69,7 @@ const Home = (): ReactElement => {
         totalItems={totalItems}
         onPageChange={handlePageChange}
       />
-    </>
+    </PageContainer>
   );
 };
 
