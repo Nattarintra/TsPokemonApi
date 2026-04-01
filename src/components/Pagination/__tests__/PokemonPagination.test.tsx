@@ -13,6 +13,7 @@ interface MockPaginationProps {
   showLastButton?: boolean;
   color?: string;
   shape?: string;
+  size?: string;
   "aria-label"?: string;
 }
 
@@ -55,6 +56,21 @@ afterEach(() => {
 });
 
 describe("PokemonPagination Component", () => {
+  const setMatchMedia = (matches: boolean) => {
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: jest.fn().mockImplementation(() => ({
+        matches,
+        media: "(max-width: 600px)",
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      })),
+    });
+  };
   it("returns null when totalPages is 1", () => {
     const { container } = renderWithProviders(
       <PokemonPagination
@@ -288,5 +304,28 @@ describe("PokemonPagination Component", () => {
     fireEvent.click(screen.getByTestId("page-3"));
     expect(mockOnPageChange).toHaveBeenLastCalledWith(3);
     expect(mockOnPageChange).toHaveBeenCalledTimes(2);
+  });
+
+  it("uses mobile-friendly pagination settings on small screens", () => {
+    setMatchMedia(true);
+
+    renderWithProviders(
+      <PokemonPagination
+        currentPage={1}
+        pageSize={12}
+        totalItems={150}
+        onPageChange={mockOnPageChange}
+      />,
+    );
+
+    expect(mockMuiPagination).toHaveBeenCalledWith(
+      expect.objectContaining({
+        boundaryCount: 1,
+        siblingCount: 0,
+        showFirstButton: false,
+        showLastButton: false,
+        size: "small",
+      }),
+    );
   });
 });
