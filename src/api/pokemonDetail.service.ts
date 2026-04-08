@@ -6,7 +6,7 @@ import type {
   PokemonIdentity,
   PokemonStat,
 } from "@/types/pokemon.type";
-import { fetchEvolutionChain, fetchPokemonById, fetchPokemonSpecies } from "./pokemon.api";
+import { fetchEvolutionChain, fetchPokemonById, fetchPokemonSpecies } from "@/api/pokemon.api";
 
 import {
   flattenEvolutionChain,
