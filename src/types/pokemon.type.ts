@@ -135,7 +135,7 @@ export interface PokemonCombatInfo {
 }
 
 export interface PokemonDetailProps {
-  identity: PokemonCardProps;
+  identity: PokemonIdentity;
   bio: PokemonBioInfo;
   combat: PokemonCombatInfo;
   evolutions: EvolutionStage[];

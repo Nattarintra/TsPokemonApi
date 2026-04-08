@@ -1,4 +1,10 @@
-import type { Pokemon, PokemonListItem } from "@/types/pokemon.type";
+import type {
+  EvolutionChain,
+  Pokemon,
+  PokemonDetail,
+  PokemonListItem,
+  PokemonSpecies,
+} from "@/types/pokemon.type";
 import { env } from "@/config";
 import { handleHttpError } from "@/errors/handleHttpError";
 import { handleNetworkError } from "@/errors/handleNetworkError";
@@ -24,9 +30,39 @@ export const fetchPokemonDetails = async (
   const { success, failed } = await safePromiseAll(
     results.map((p) => fetchWithErrorHandling<Pokemon>(p.url)),
   );
-
+  console.log("Fetched Pokemon List:", success);
   return {
     pokemons: success, // raw Pokemon
     failed,
   };
+};
+
+export const fetchPokemonById = async (id: number): Promise<PokemonDetail> => {
+  try {
+    const res = await fetch(`${env.apiBaseUrl}/pokemon/${id}`);
+    handleHttpError(res);
+    return res.json() as Promise<PokemonDetail>;
+  } catch (error) {
+    throw handleNetworkError(error);
+  }
+};
+
+export const fetchPokemonSpecies = async (id: number): Promise<PokemonSpecies> => {
+  try {
+    const res = await fetch(`${env.apiBaseUrl}/pokemon-species/${id}`);
+    handleHttpError(res);
+    return res.json() as Promise<PokemonSpecies>;
+  } catch (error) {
+    throw handleNetworkError(error);
+  }
+};
+
+export const fetchEvolutionChain = async (url: string): Promise<EvolutionChain> => {
+  try {
+    const res = await fetch(url);
+    handleHttpError(res);
+    return res.json() as Promise<EvolutionChain>;
+  } catch (error) {
+    throw handleNetworkError(error);
+  }
 };
