@@ -30,7 +30,6 @@ export const fetchPokemonDetails = async (
   const { success, failed } = await safePromiseAll(
     results.map((p) => fetchWithErrorHandling<Pokemon>(p.url)),
   );
-  console.log("Fetched Pokemon List:", success);
   return {
     pokemons: success, // raw Pokemon
     failed,

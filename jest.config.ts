@@ -13,6 +13,9 @@ const config: Config = {
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 
     moduleNameMapper: {
+        // Redirect env.ts (uses import.meta which is invalid in Jest/Node CJS context)
+        // to a test-safe version that reads from process.env instead.
+        '^@config/env$': '<rootDir>/src/config/__mocks__/env',
         '^@/(.*)$': '<rootDir>/src/$1',
         '^@components/(.*)$': '<rootDir>/src/components/$1',
         '^@theme/(.*)$': '<rootDir>/src/theme/$1',
