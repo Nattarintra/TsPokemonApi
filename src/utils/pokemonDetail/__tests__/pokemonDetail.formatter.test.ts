@@ -8,14 +8,12 @@ import {
   formatCategory,
   formatGender,
   flattenEvolutionChain,
-} from "@/utils/pokemonDetail.formatter";
+} from "@/utils/pokemonDetail/pokemonDetail.formatter";
 import type { PokemonSpecies, EvolutionChainLink } from "@/types/pokemon.type";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const makeSpecies = (
-  overrides: Partial<PokemonSpecies> = {}
-): PokemonSpecies => ({
+const makeSpecies = (overrides: Partial<PokemonSpecies> = {}): PokemonSpecies => ({
   gender_rate: 4,
   genera: [],
   flavor_text_entries: [],
@@ -30,7 +28,11 @@ describe("formatDescription", () => {
     const species = makeSpecies({
       flavor_text_entries: [
         { flavor_text: "A strange\nseed.", language: { name: "ja" }, version: { name: "red" } },
-        { flavor_text: "A strange\nseed\fwas planted.", language: { name: "en" }, version: { name: "red" } },
+        {
+          flavor_text: "A strange\nseed\fwas planted.",
+          language: { name: "en" },
+          version: { name: "red" },
+        },
       ],
     });
     expect(formatDescription(species)).toBe("A strange seed was planted.");
@@ -184,11 +186,7 @@ describe("flattenEvolutionChain", () => {
         },
       ],
     };
-    expect(flattenEvolutionChain(chain)).toEqual([
-      "bulbasaur",
-      "ivysaur",
-      "venusaur",
-    ]);
+    expect(flattenEvolutionChain(chain)).toEqual(["bulbasaur", "ivysaur", "venusaur"]);
   });
 
   it("only follows the first branch when multiple evolutions exist", () => {
@@ -205,10 +203,6 @@ describe("flattenEvolutionChain", () => {
       ],
     };
     // flattenEvolutionChain takes evolves_to[0] at each step
-    expect(flattenEvolutionChain(chain)).toEqual([
-      "poliwag",
-      "poliwhirl",
-      "poliwrath",
-    ]);
+    expect(flattenEvolutionChain(chain)).toEqual(["poliwag", "poliwhirl", "poliwrath"]);
   });
 });

@@ -7,3 +7,8 @@ export const SKELETON_COUNT = 6;
 export const GRID_MAX_WIDTH = 1200;
 
 export const DRAWER_WIDTH = 240;
+
+export const QUERY_KEYS = {
+  POKEMON_LIST: ["pokemon-list"],
+  POKEMON_DETAIL: (id: number) => ["pokemon-detail", id],
+} as const;

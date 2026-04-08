@@ -15,7 +15,7 @@ import {
   formatGender,
   formatHeight,
   formatWeight,
-} from "@/utils/pokemonDetail.formatter";
+} from "@/utils/pokemonDetail/pokemonDetail.formatter";
 
 export const getPokemonDetailData = async (id: number): Promise<PokemonDetailProps> => {
   const [detail, species] = await Promise.all([fetchPokemonById(id), fetchPokemonSpecies(id)]);
