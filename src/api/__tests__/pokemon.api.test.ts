@@ -10,6 +10,7 @@ const API_BASE = "https://pokeapi.co/api/v2";
 const POKEMON_URL = `${API_BASE}/pokemon`;
 const SPECIES_URL = `${API_BASE}/pokemon-species`;
 const EVOLUTION_CHAIN_URL = `${API_BASE}/evolution-chain/1/`;
+const TYPE_URL = `${API_BASE}/type`;
 
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -40,6 +41,7 @@ let fetchPokemonByName: PokemonApiModule["fetchPokemonByName"];
 let fetchPokemonSpecies: PokemonApiModule["fetchPokemonSpecies"];
 let fetchEvolutionChain: PokemonApiModule["fetchEvolutionChain"];
 let fetchPokemonDetails: PokemonApiModule["fetchPokemonDetails"];
+let fetchPokemonType: PokemonApiModule["fetchPokemonType"];
 
 beforeAll(async () => {
   const module = await import("@/api/pokemon.api");
@@ -49,6 +51,7 @@ beforeAll(async () => {
   fetchPokemonSpecies = module.fetchPokemonSpecies;
   fetchEvolutionChain = module.fetchEvolutionChain;
   fetchPokemonDetails = module.fetchPokemonDetails;
+  fetchPokemonType = module.fetchPokemonType;
 });
 
 // ─── Setup ───────────────────────────────────────────────────────────────────
@@ -334,5 +337,53 @@ describe("fetchPokemonDetails", () => {
     expect(result.pokemons).toHaveLength(0);
     expect(result.failed).toBe(0);
     expect(mockFetch).not.toHaveBeenCalled();
+  });
+});
+
+// ─── fetchPokemonType ─────────────────────────────────────────────────────────
+
+describe("fetchPokemonType", () => {
+  const mockTypeDetail = {
+    name: "grass",
+    damage_relations: {
+      double_damage_from: [
+        { name: "fire", url: "" },
+        { name: "ice", url: "" },
+      ],
+    },
+  };
+
+  it("calls the correct URL with the given type name", async () => {
+    mockFetch.mockResolvedValue(makeOkResponse(mockTypeDetail));
+
+    await fetchPokemonType("grass");
+
+    const calledUrl = (mockFetch.mock.calls[0] as unknown[])[0] as string;
+    expect(calledUrl).toContain(`${TYPE_URL}/grass`);
+  });
+
+  it("returns PokemonTypeDetail on success", async () => {
+    mockFetch.mockResolvedValue(makeOkResponse(mockTypeDetail));
+
+    const result = await fetchPokemonType("grass");
+
+    expect(result).toEqual(mockTypeDetail);
+  });
+
+  it("throws AppError on HTTP error (e.g. 404)", async () => {
+    mockFetch.mockResolvedValue(makeErrorResponse(404, "Not Found"));
+
+    await expect(fetchPokemonType("unknown")).rejects.toMatchObject({
+      type: "HTTP_ERROR",
+      status: 404,
+    });
+  });
+
+  it("throws AppError on network failure", async () => {
+    mockFetch.mockRejectedValue(new TypeError("Failed to fetch"));
+
+    await expect(fetchPokemonType("grass")).rejects.toMatchObject({
+      type: "NETWORK_ERROR",
+    });
   });
 });

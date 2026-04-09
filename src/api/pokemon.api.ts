@@ -4,6 +4,7 @@ import type {
   PokemonDetail,
   PokemonListItem,
   PokemonSpecies,
+  PokemonTypeDetail,
 } from "@/types/pokemon.type";
 import { env } from "@/config";
 import { handleHttpError } from "@/errors/handleHttpError";
@@ -71,6 +72,16 @@ export const fetchEvolutionChain = async (url: string): Promise<EvolutionChain> 
     const res = await fetch(url);
     handleHttpError(res);
     return res.json() as Promise<EvolutionChain>;
+  } catch (error) {
+    throw handleNetworkError(error);
+  }
+};
+
+export const fetchPokemonType = async (typeName: string): Promise<PokemonTypeDetail> => {
+  try {
+    const res = await fetch(`${env.apiBaseUrl}/type/${typeName}`);
+    handleHttpError(res);
+    return res.json() as Promise<PokemonTypeDetail>;
   } catch (error) {
     throw handleNetworkError(error);
   }

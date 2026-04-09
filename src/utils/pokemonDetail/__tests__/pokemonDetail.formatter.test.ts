@@ -8,8 +8,9 @@ import {
   formatCategory,
   formatGender,
   flattenEvolutionChain,
+  formatWeaknesses,
 } from "@/utils/pokemonDetail/pokemonDetail.formatter";
-import type { PokemonSpecies, EvolutionChainLink } from "@/types/pokemon.type";
+import type { PokemonSpecies, EvolutionChainLink, PokemonTypeDetail } from "@/types/pokemon.type";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -204,5 +205,47 @@ describe("flattenEvolutionChain", () => {
     };
     // flattenEvolutionChain takes evolves_to[0] at each step
     expect(flattenEvolutionChain(chain)).toEqual(["poliwag", "poliwhirl", "poliwrath"]);
+  });
+});
+
+// ─── formatWeaknesses ─────────────────────────────────────────────────────────
+
+const makeTypeDetail = (name: string, weaknesses: string[]): PokemonTypeDetail => ({
+  name,
+  damage_relations: {
+    double_damage_from: weaknesses.map((w) => ({ name: w, url: "" })),
+  },
+});
+
+describe("formatWeaknesses", () => {
+  it("returns empty array when typeDetails is empty", () => {
+    expect(formatWeaknesses([])).toEqual([]);
+  });
+
+  it("returns weaknesses from a single type", () => {
+    const result = formatWeaknesses([makeTypeDetail("grass", ["fire", "ice", "flying"])]);
+
+    expect(result).toEqual(expect.arrayContaining(["fire", "ice", "flying"]));
+    expect(result).toHaveLength(3);
+  });
+
+  it("deduplicates weaknesses shared across multiple types", () => {
+    const grassType = makeTypeDetail("grass", ["fire", "ice"]);
+    const poisonType = makeTypeDetail("poison", ["ground", "fire"]); // fire is shared
+
+    const result = formatWeaknesses([grassType, poisonType]);
+
+    expect(result).toContain("fire");
+    expect(result.filter((w) => w === "fire")).toHaveLength(1); // no duplicate
+  });
+
+  it("collects weaknesses from multiple types without overlap", () => {
+    const grassType = makeTypeDetail("grass", ["fire", "ice"]);
+    const poisonType = makeTypeDetail("poison", ["ground", "psychic"]);
+
+    const result = formatWeaknesses([grassType, poisonType]);
+
+    expect(result).toEqual(expect.arrayContaining(["fire", "ice", "ground", "psychic"]));
+    expect(result).toHaveLength(4);
   });
 });

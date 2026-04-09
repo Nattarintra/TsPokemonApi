@@ -38,7 +38,8 @@ const Details = (): ReactElement => {
 
   if (!data) return <PokemonGridSkeleton />;
 
-  const { identity, bio, combat, evolutions, evolutionsFailed } = data;
+  const { identity, bio, combat, evolutions, evolutionsFailed, weaknessesFailed } = data;
+
   return (
     <PageContainer>
       <NavigationBar
@@ -47,7 +48,12 @@ const Details = (): ReactElement => {
         onNavigate={handleNavigate}
       />
 
-      <HeroSection identity={identity} bio={bio} combat={combat} />
+      <HeroSection
+        identity={identity}
+        bio={bio}
+        combat={combat}
+        weaknessesFailed={weaknessesFailed}
+      />
 
       <StatBars stats={combat.stats} />
 

@@ -1,4 +1,4 @@
-import type { PokemonSpecies, EvolutionChainLink } from "@/types/pokemon.type";
+import type { PokemonSpecies, EvolutionChainLink, PokemonTypeDetail } from "@/types/pokemon.type";
 
 export const formatDescription = (species: PokemonSpecies): string =>
   species.flavor_text_entries
@@ -28,4 +28,16 @@ export const flattenEvolutionChain = (chain: EvolutionChainLink): string[] => {
     names.push(...flattenEvolutionChain(chain.evolves_to[0]));
   }
   return names;
+};
+
+export const formatWeaknesses = (typeDetails: PokemonTypeDetail[]): string[] => {
+  const weaknessSet = new Set<string>();
+
+  typeDetails.forEach((typeDetail) => {
+    typeDetail.damage_relations.double_damage_from.forEach((w) => {
+      weaknessSet.add(w.name);
+    });
+  });
+
+  return Array.from(weaknessSet);
 };

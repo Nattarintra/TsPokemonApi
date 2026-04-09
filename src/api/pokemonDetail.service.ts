@@ -11,6 +11,7 @@ import {
   fetchPokemonById,
   fetchPokemonByName,
   fetchPokemonSpecies,
+  fetchPokemonType,
 } from "@/api/pokemon.api";
 
 import {
@@ -19,6 +20,7 @@ import {
   formatDescription,
   formatGender,
   formatHeight,
+  formatWeaknesses,
   formatWeight,
 } from "@/utils/pokemonDetail/pokemonDetail.formatter";
 import { safePromiseAll } from "@/utils/safePromiseAll";
@@ -26,12 +28,17 @@ import { safePromiseAll } from "@/utils/safePromiseAll";
 export const getPokemonDetailData = async (id: number): Promise<PokemonDetailProps> => {
   const [detail, species] = await Promise.all([fetchPokemonById(id), fetchPokemonSpecies(id)]);
 
-  const evolutionChain = await fetchEvolutionChain(species.evolution_chain.url);
+  const [evolutionChain, { success: typeDetails, failed: weaknessesFailed }] = await Promise.all([
+    fetchEvolutionChain(species.evolution_chain.url),
+    safePromiseAll(detail.types.map((t) => fetchPokemonType(t.type.name))),
+  ]);
+
   const evolutionNames = flattenEvolutionChain(evolutionChain.chain);
 
   const { success: evolutionPokemons, failed: evolutionsFailed } = await safePromiseAll(
     evolutionNames.map((name) => fetchPokemonByName(name)),
   );
+
   const identity: PokemonIdentity = {
     id: detail.id,
     name: detail.name,
@@ -49,7 +56,7 @@ export const getPokemonDetailData = async (id: number): Promise<PokemonDetailPro
 
   const combat: PokemonCombatInfo = {
     types: detail.types.map((t) => t.type.name),
-    weaknesses: [],
+    weaknesses: formatWeaknesses(typeDetails),
     stats: detail.stats.map(
       (s): PokemonStat => ({
         name: s.stat.name,
@@ -65,5 +72,5 @@ export const getPokemonDetailData = async (id: number): Promise<PokemonDetailPro
     types: p.types.map((t) => t.type.name),
   }));
 
-  return { identity, bio, combat, evolutions, evolutionsFailed };
+  return { identity, bio, combat, evolutions, evolutionsFailed, weaknessesFailed };
 };

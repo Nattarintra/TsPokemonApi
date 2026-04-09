@@ -8,16 +8,28 @@ interface HeroSectionProps {
   identity: PokemonIdentity;
   bio: PokemonBioInfo;
   combat: PokemonCombatInfo;
+  weaknessesFailed: number;
 }
 
-const HeroSection = ({ identity, bio, combat }: HeroSectionProps): ReactElement => {
+const HeroSection = ({
+  identity,
+  bio,
+  combat,
+  weaknessesFailed,
+}: HeroSectionProps): ReactElement => {
   return (
     <Grid container spacing={{ xs: 2, md: 4 }} sx={{ mb: 4 }}>
       <Grid size={{ xs: 12, md: 5 }}>
         <PokemonImage name={identity.name} image={identity.image} />
       </Grid>
       <Grid size={{ xs: 12, md: 7 }}>
-        <PokemonInfo id={identity.id} name={identity.name} bio={bio} combat={combat} />
+        <PokemonInfo
+          id={identity.id}
+          name={identity.name}
+          bio={bio}
+          combat={combat}
+          weaknessesFailed={weaknessesFailed}
+        />
       </Grid>
     </Grid>
   );

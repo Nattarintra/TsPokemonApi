@@ -44,6 +44,18 @@ export interface PokemonStatSlot {
   };
 }
 
+export interface PokemonTypeDamageRelations {
+  double_damage_from: {
+    name: string;
+    url: string;
+  }[];
+}
+
+export interface PokemonTypeDetail {
+  name: string;
+  damage_relations: PokemonTypeDamageRelations;
+}
+
 export interface PokemonDetail extends Pokemon {
   height: number;
   weight: number;
@@ -140,4 +152,5 @@ export interface PokemonDetailProps {
   combat: PokemonCombatInfo;
   evolutions: EvolutionStage[];
   evolutionsFailed: number;
+  weaknessesFailed: number;
 }

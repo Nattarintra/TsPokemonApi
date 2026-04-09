@@ -6,6 +6,7 @@ import type {
   PokemonDetail,
   PokemonSpecies,
   EvolutionChain,
+  PokemonTypeDetail,
 } from "@/types/pokemon.type";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -18,6 +19,9 @@ const EVOLUTION_CHAIN_URL = "https://pokeapi.co/api/v2/evolution-chain/1/";
 const EVO_BULBASAUR_URL = `${API_BASE}/pokemon/bulbasaur`;
 const EVO_IVYSAUR_URL = `${API_BASE}/pokemon/ivysaur`;
 const EVO_VENUSAUR_URL = `${API_BASE}/pokemon/venusaur`;
+
+const TYPE_GRASS_URL = `${API_BASE}/type/grass`;
+const TYPE_POISON_URL = `${API_BASE}/type/poison`;
 
 // ─── Fetch mock ───────────────────────────────────────────────────────────────
 
@@ -114,6 +118,17 @@ const mockBulbasaur = makeEvoPokemon(1, "bulbasaur", "https://img/bulbasaur.png"
 const mockIvysaur   = makeEvoPokemon(2, "ivysaur",   "https://img/ivysaur.png",   ["grass", "poison"]);
 const mockVenusaur  = makeEvoPokemon(3, "venusaur",  "https://img/venusaur.png",  ["grass", "poison"]);
 
+const makeTypeDetail = (name: string, weaknesses: string[]): PokemonTypeDetail => ({
+  name,
+  damage_relations: {
+    double_damage_from: weaknesses.map((w) => ({ name: w, url: "" })),
+  },
+});
+
+// Default type mocks return no weaknesses so existing "returns empty weaknesses" test is unaffected
+const mockGrassType  = makeTypeDetail("grass",  []);
+const mockPoisonType = makeTypeDetail("poison", []);
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("getPokemonDetailData", () => {
@@ -127,6 +142,8 @@ describe("getPokemonDetailData", () => {
       if (url === EVO_BULBASAUR_URL) return makeOkResponse(mockBulbasaur);
       if (url === EVO_IVYSAUR_URL)   return makeOkResponse(mockIvysaur);
       if (url === EVO_VENUSAUR_URL)  return makeOkResponse(mockVenusaur);
+      if (url === TYPE_GRASS_URL)    return makeOkResponse(mockGrassType);
+      if (url === TYPE_POISON_URL)   return makeOkResponse(mockPoisonType);
       return Promise.reject(new Error(`Unexpected URL: ${url}`));
     });
   });
@@ -279,6 +296,59 @@ describe("getPokemonDetailData", () => {
     const { evolutionsFailed } = await getPokemonDetailData(1);
 
     expect(evolutionsFailed).toBe(2);
+  });
+
+  it("fetches type details for each pokemon type", async () => {
+    await getPokemonDetailData(1);
+
+    const urls = mockFetch.mock.calls.map((call) => call[0]?.toString());
+    expect(urls).toContain(TYPE_GRASS_URL);
+    expect(urls).toContain(TYPE_POISON_URL);
+  });
+
+  it("fills combat.weaknesses from type data", async () => {
+    mockFetch.mockImplementation((input) => {
+      const url = input.toString();
+      if (url === POKEMON_URL) return makeOkResponse(mockDetail);
+      if (url === SPECIES_URL) return makeOkResponse(mockSpecies);
+      if (url === EVOLUTION_CHAIN_URL) return makeOkResponse(mockEvolutionChain);
+      if (url === EVO_BULBASAUR_URL) return makeOkResponse(mockBulbasaur);
+      if (url === EVO_IVYSAUR_URL)   return makeOkResponse(mockIvysaur);
+      if (url === EVO_VENUSAUR_URL)  return makeOkResponse(mockVenusaur);
+      if (url === TYPE_GRASS_URL)    return makeOkResponse(makeTypeDetail("grass",  ["fire", "ice"]));
+      if (url === TYPE_POISON_URL)   return makeOkResponse(makeTypeDetail("poison", ["ground", "psychic"]));
+      return Promise.reject(new Error(`Unexpected URL: ${url}`));
+    });
+
+    const { combat } = await getPokemonDetailData(1);
+
+    expect(combat.weaknesses).toEqual(expect.arrayContaining(["fire", "ice", "ground", "psychic"]));
+    expect(combat.weaknesses).toHaveLength(4);
+  });
+
+  it("returns weaknessesFailed = 0 when all type fetches succeed", async () => {
+    const { weaknessesFailed } = await getPokemonDetailData(1);
+
+    expect(weaknessesFailed).toBe(0);
+  });
+
+  it("returns weaknessesFailed = n when n type fetches fail", async () => {
+    mockFetch.mockImplementation((input) => {
+      const url = input.toString();
+      if (url === POKEMON_URL) return makeOkResponse(mockDetail);
+      if (url === SPECIES_URL) return makeOkResponse(mockSpecies);
+      if (url === EVOLUTION_CHAIN_URL) return makeOkResponse(mockEvolutionChain);
+      if (url === EVO_BULBASAUR_URL) return makeOkResponse(mockBulbasaur);
+      if (url === EVO_IVYSAUR_URL)   return makeOkResponse(mockIvysaur);
+      if (url === EVO_VENUSAUR_URL)  return makeOkResponse(mockVenusaur);
+      if (url === TYPE_GRASS_URL)    return makeErrorResponse(404);
+      if (url === TYPE_POISON_URL)   return makeErrorResponse(404);
+      return Promise.reject(new Error(`Unexpected URL: ${url}`));
+    });
+
+    const { weaknessesFailed } = await getPokemonDetailData(1);
+
+    expect(weaknessesFailed).toBe(2);
   });
 
   it("returns partial evolutions when some fetch fails (not empty array)", async () => {

@@ -4,12 +4,15 @@ import type { SxProps, Theme } from "@mui/material";
 import type { PokemonBioInfo, PokemonCombatInfo } from "@/types/pokemon.type";
 import PokemonTypeChips from "@/components/PokemonTypeChips/PokemonTypeChips";
 import PokemonInfoTable from "./PokemonInfoTable";
+import ErrorBanner from "@/components/Errors/ErrorBanner";
+import { getPartialErrorMessage } from "@/errors/getErrorMessages";
 
 interface PokemonInfoProps {
   id: number;
   name: string;
   bio: PokemonBioInfo;
   combat: PokemonCombatInfo;
+  weaknessesFailed: number;
 }
 
 const formatId = (id: number): string => `#${id.toString().padStart(4, "0")}`;
@@ -30,7 +33,13 @@ const pokemonInfoStyles: Record<string, SxProps<Theme>> = {
   },
 };
 
-const PokemonInfo = ({ id, name, bio, combat }: PokemonInfoProps): ReactElement => {
+const PokemonInfo = ({
+  id,
+  name,
+  bio,
+  combat,
+  weaknessesFailed,
+}: PokemonInfoProps): ReactElement => {
   return (
     <Box sx={pokemonInfoStyles.container}>
       <Typography variant="caption" color="text.secondary">
@@ -58,6 +67,9 @@ const PokemonInfo = ({ id, name, bio, combat }: PokemonInfoProps): ReactElement 
         <Typography variant="caption" color="text.secondary">
           Weaknesses
         </Typography>
+        {weaknessesFailed > 0 && (
+          <ErrorBanner message={getPartialErrorMessage(weaknessesFailed)} variant="inline" />
+        )}
         <PokemonTypeChips items={combat.weaknesses} size="medium" variant="weaknesses" />
       </Box>
     </Box>
