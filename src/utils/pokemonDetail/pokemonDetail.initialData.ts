@@ -42,7 +42,7 @@ export const getPokemonDetailInitialData = (
 
   const evolutions: EvolutionStage[] = [];
 
-  return { identity, bio, combat, evolutions };
+  return { identity, bio, combat, evolutions, evolutionsFailed: 0 };
 };
 
 export const getPokemonDetailInitialDataUpdatedAt = (

@@ -6,7 +6,12 @@ import type {
   PokemonIdentity,
   PokemonStat,
 } from "@/types/pokemon.type";
-import { fetchEvolutionChain, fetchPokemonById, fetchPokemonSpecies } from "@/api/pokemon.api";
+import {
+  fetchEvolutionChain,
+  fetchPokemonById,
+  fetchPokemonByName,
+  fetchPokemonSpecies,
+} from "@/api/pokemon.api";
 
 import {
   flattenEvolutionChain,
@@ -16,6 +21,7 @@ import {
   formatHeight,
   formatWeight,
 } from "@/utils/pokemonDetail/pokemonDetail.formatter";
+import { safePromiseAll } from "@/utils/safePromiseAll";
 
 export const getPokemonDetailData = async (id: number): Promise<PokemonDetailProps> => {
   const [detail, species] = await Promise.all([fetchPokemonById(id), fetchPokemonSpecies(id)]);
@@ -23,6 +29,9 @@ export const getPokemonDetailData = async (id: number): Promise<PokemonDetailPro
   const evolutionChain = await fetchEvolutionChain(species.evolution_chain.url);
   const evolutionNames = flattenEvolutionChain(evolutionChain.chain);
 
+  const { success: evolutionPokemons, failed: evolutionsFailed } = await safePromiseAll(
+    evolutionNames.map((name) => fetchPokemonByName(name)),
+  );
   const identity: PokemonIdentity = {
     id: detail.id,
     name: detail.name,
@@ -49,12 +58,12 @@ export const getPokemonDetailData = async (id: number): Promise<PokemonDetailPro
     ),
   };
 
-  const evolutions: EvolutionStage[] = evolutionNames.map((name) => ({
-    id: 0,
-    name,
-    image: "",
-    types: [],
+  const evolutions: EvolutionStage[] = evolutionPokemons.map((p) => ({
+    id: p.id,
+    name: p.name,
+    image: p.sprites.other["official-artwork"].front_default,
+    types: p.types.map((t) => t.type.name),
   }));
 
-  return { identity, bio, combat, evolutions };
+  return { identity, bio, combat, evolutions, evolutionsFailed };
 };

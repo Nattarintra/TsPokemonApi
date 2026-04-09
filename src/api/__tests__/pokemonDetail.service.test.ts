@@ -15,6 +15,10 @@ const POKEMON_URL = `${API_BASE}/pokemon/1`;
 const SPECIES_URL = `${API_BASE}/pokemon-species/1`;
 const EVOLUTION_CHAIN_URL = "https://pokeapi.co/api/v2/evolution-chain/1/";
 
+const EVO_BULBASAUR_URL = `${API_BASE}/pokemon/bulbasaur`;
+const EVO_IVYSAUR_URL = `${API_BASE}/pokemon/ivysaur`;
+const EVO_VENUSAUR_URL = `${API_BASE}/pokemon/venusaur`;
+
 // ─── Fetch mock ───────────────────────────────────────────────────────────────
 
 const mockFetch = jest.fn<typeof fetch>();
@@ -90,6 +94,26 @@ const mockEvolutionChain: EvolutionChain = {
   },
 };
 
+const makeEvoPokemon = (
+  id: number,
+  name: string,
+  image: string,
+  types: string[],
+): PokemonDetail => ({
+  id,
+  name,
+  height: 10,
+  weight: 100,
+  sprites: { other: { "official-artwork": { front_default: image } } },
+  types: types.map((t) => ({ type: { name: t } })),
+  abilities: [],
+  stats: [],
+});
+
+const mockBulbasaur = makeEvoPokemon(1, "bulbasaur", "https://img/bulbasaur.png", ["grass", "poison"]);
+const mockIvysaur   = makeEvoPokemon(2, "ivysaur",   "https://img/ivysaur.png",   ["grass", "poison"]);
+const mockVenusaur  = makeEvoPokemon(3, "venusaur",  "https://img/venusaur.png",  ["grass", "poison"]);
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("getPokemonDetailData", () => {
@@ -100,6 +124,9 @@ describe("getPokemonDetailData", () => {
       if (url === POKEMON_URL) return makeOkResponse(mockDetail);
       if (url === SPECIES_URL) return makeOkResponse(mockSpecies);
       if (url === EVOLUTION_CHAIN_URL) return makeOkResponse(mockEvolutionChain);
+      if (url === EVO_BULBASAUR_URL) return makeOkResponse(mockBulbasaur);
+      if (url === EVO_IVYSAUR_URL)   return makeOkResponse(mockIvysaur);
+      if (url === EVO_VENUSAUR_URL)  return makeOkResponse(mockVenusaur);
       return Promise.reject(new Error(`Unexpected URL: ${url}`));
     });
   });
@@ -130,6 +157,7 @@ describe("getPokemonDetailData", () => {
     expect(result).toHaveProperty("bio");
     expect(result).toHaveProperty("combat");
     expect(result).toHaveProperty("evolutions");
+    expect(result).toHaveProperty("evolutionsFailed");
   });
 
   it("formats identity correctly (id, name, image)", async () => {
@@ -173,13 +201,13 @@ describe("getPokemonDetailData", () => {
     expect(combat.weaknesses).toEqual([]);
   });
 
-  it("returns evolution names with placeholder id and image", async () => {
+  it("maps evolutions correctly from fetched pokemon data", async () => {
     const { evolutions } = await getPokemonDetailData(1);
 
     expect(evolutions).toEqual([
-      { id: 0, name: "bulbasaur", image: "", types: [] },
-      { id: 0, name: "ivysaur", image: "", types: [] },
-      { id: 0, name: "venusaur", image: "", types: [] },
+      { id: 1, name: "bulbasaur", image: "https://img/bulbasaur.png", types: ["grass", "poison"] },
+      { id: 2, name: "ivysaur",   image: "https://img/ivysaur.png",   types: ["grass", "poison"] },
+      { id: 3, name: "venusaur",  image: "https://img/venusaur.png",  types: ["grass", "poison"] },
     ]);
   });
 
@@ -210,6 +238,69 @@ describe("getPokemonDetailData", () => {
     await expect(getPokemonDetailData(1)).rejects.toMatchObject({
       type: "HTTP_ERROR",
       status: 404,
+    });
+  });
+
+  it("returns evolutionsFailed = 0 when all evolutions fetch successfully", async () => {
+    const { evolutionsFailed } = await getPokemonDetailData(1);
+
+    expect(evolutionsFailed).toBe(0);
+  });
+
+  it("returns evolutionsFailed = 1 when one evolution fetch fails", async () => {
+    mockFetch.mockImplementation((input) => {
+      const url = input.toString();
+      if (url === POKEMON_URL) return makeOkResponse(mockDetail);
+      if (url === SPECIES_URL) return makeOkResponse(mockSpecies);
+      if (url === EVOLUTION_CHAIN_URL) return makeOkResponse(mockEvolutionChain);
+      if (url === EVO_BULBASAUR_URL) return makeOkResponse(mockBulbasaur);
+      if (url === EVO_IVYSAUR_URL)   return makeOkResponse(mockIvysaur);
+      if (url === EVO_VENUSAUR_URL)  return makeErrorResponse(404);
+      return Promise.reject(new Error(`Unexpected URL: ${url}`));
+    });
+
+    const { evolutionsFailed } = await getPokemonDetailData(1);
+
+    expect(evolutionsFailed).toBe(1);
+  });
+
+  it("returns evolutionsFailed = n when n evolutions fetch fail", async () => {
+    mockFetch.mockImplementation((input) => {
+      const url = input.toString();
+      if (url === POKEMON_URL) return makeOkResponse(mockDetail);
+      if (url === SPECIES_URL) return makeOkResponse(mockSpecies);
+      if (url === EVOLUTION_CHAIN_URL) return makeOkResponse(mockEvolutionChain);
+      if (url === EVO_BULBASAUR_URL) return makeOkResponse(mockBulbasaur);
+      if (url === EVO_IVYSAUR_URL)   return makeErrorResponse(404);
+      if (url === EVO_VENUSAUR_URL)  return makeErrorResponse(404);
+      return Promise.reject(new Error(`Unexpected URL: ${url}`));
+    });
+
+    const { evolutionsFailed } = await getPokemonDetailData(1);
+
+    expect(evolutionsFailed).toBe(2);
+  });
+
+  it("returns partial evolutions when some fetch fails (not empty array)", async () => {
+    mockFetch.mockImplementation((input) => {
+      const url = input.toString();
+      if (url === POKEMON_URL) return makeOkResponse(mockDetail);
+      if (url === SPECIES_URL) return makeOkResponse(mockSpecies);
+      if (url === EVOLUTION_CHAIN_URL) return makeOkResponse(mockEvolutionChain);
+      if (url === EVO_BULBASAUR_URL) return makeOkResponse(mockBulbasaur);
+      if (url === EVO_IVYSAUR_URL)   return makeErrorResponse(404);
+      if (url === EVO_VENUSAUR_URL)  return makeErrorResponse(404);
+      return Promise.reject(new Error(`Unexpected URL: ${url}`));
+    });
+
+    const { evolutions } = await getPokemonDetailData(1);
+
+    expect(evolutions).toHaveLength(1);
+    expect(evolutions[0]).toEqual({
+      id: 1,
+      name: "bulbasaur",
+      image: "https://img/bulbasaur.png",
+      types: ["grass", "poison"],
     });
   });
 });

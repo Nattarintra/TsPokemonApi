@@ -56,6 +56,16 @@ export const fetchPokemonSpecies = async (id: number): Promise<PokemonSpecies> =
   }
 };
 
+export const fetchPokemonByName = async (name: string): Promise<PokemonDetail> => {
+  try {
+    const res = await fetch(`${env.apiBaseUrl}/pokemon/${name}`);
+    handleHttpError(res);
+    return res.json() as Promise<PokemonDetail>;
+  } catch (error) {
+    throw handleNetworkError(error);
+  }
+};
+
 export const fetchEvolutionChain = async (url: string): Promise<EvolutionChain> => {
   try {
     const res = await fetch(url);

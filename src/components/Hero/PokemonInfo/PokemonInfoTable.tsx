@@ -6,7 +6,7 @@ import type { PokemonBioInfo } from "@/types/pokemon.type";
 const pokemonInfoTableStyles: Record<string, SxProps<Theme>> = {
   container: (theme: Theme) => ({
     backgroundColor: theme.palette.primary.main,
-    borderRadius: theme.shape.radius.small,
+    borderRadius: theme.shape.radius.extraSmall,
     p: 2,
     display: "grid",
     gridTemplateColumns: "1fr 1fr",

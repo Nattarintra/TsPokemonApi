@@ -105,6 +105,14 @@ describe("getPokemonDetailInitialData", () => {
 
     expect(evolutions).toEqual([]);
   });
+
+  it("returns evolutionsFailed = 0 in initial data", () => {
+    mockGetQueryData.mockReturnValue(mockListResult);
+
+    const { evolutionsFailed } = getPokemonDetailInitialData(mockQueryClient, 1)!;
+
+    expect(evolutionsFailed).toBe(0);
+  });
 });
 
 describe("getPokemonDetailInitialDataUpdatedAt", () => {

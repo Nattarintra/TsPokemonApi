@@ -139,4 +139,5 @@ export interface PokemonDetailProps {
   bio: PokemonBioInfo;
   combat: PokemonCombatInfo;
   evolutions: EvolutionStage[];
+  evolutionsFailed: number;
 }

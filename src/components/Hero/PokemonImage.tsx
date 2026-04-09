@@ -11,7 +11,7 @@ const pokemonImageStyles: Record<string, SxProps<Theme>> = {
   container: (theme: Theme) => ({
     width: "100%",
     aspectRatio: "1 / 1",
-    borderRadius: theme.shape.radius.medium,
+    borderRadius: theme.shape.radius.extraSmall,
     backgroundColor: theme.palette.background.default,
     display: "flex",
     alignItems: "center",

@@ -36,6 +36,7 @@ type PokemonApiModule = typeof import("@/api/pokemon.api");
 
 let fetchPokemonList: PokemonApiModule["fetchPokemonList"];
 let fetchPokemonById: PokemonApiModule["fetchPokemonById"];
+let fetchPokemonByName: PokemonApiModule["fetchPokemonByName"];
 let fetchPokemonSpecies: PokemonApiModule["fetchPokemonSpecies"];
 let fetchEvolutionChain: PokemonApiModule["fetchEvolutionChain"];
 let fetchPokemonDetails: PokemonApiModule["fetchPokemonDetails"];
@@ -44,6 +45,7 @@ beforeAll(async () => {
   const module = await import("@/api/pokemon.api");
   fetchPokemonList = module.fetchPokemonList;
   fetchPokemonById = module.fetchPokemonById;
+  fetchPokemonByName = module.fetchPokemonByName;
   fetchPokemonSpecies = module.fetchPokemonSpecies;
   fetchEvolutionChain = module.fetchEvolutionChain;
   fetchPokemonDetails = module.fetchPokemonDetails;
@@ -143,6 +145,51 @@ describe("fetchPokemonById", () => {
     mockFetch.mockRejectedValue(new TypeError("Failed to fetch"));
 
     await expect(fetchPokemonById(25)).rejects.toMatchObject({
+      type: "NETWORK_ERROR",
+    });
+  });
+});
+
+// ─── fetchPokemonByName ───────────────────────────────────────────────────────
+
+describe("fetchPokemonByName", () => {
+  const mockPokemon = {
+    id: 1,
+    name: "bulbasaur",
+    sprites: { other: { "official-artwork": { front_default: "img.png" } } },
+    types: [{ type: { name: "grass" } }],
+  };
+
+  it("calls the correct URL with the given name", async () => {
+    mockFetch.mockResolvedValue(makeOkResponse(mockPokemon));
+
+    await fetchPokemonByName("bulbasaur");
+
+    const calledUrl = (mockFetch.mock.calls[0] as unknown[])[0] as string;
+    expect(calledUrl).toContain(`${POKEMON_URL}/bulbasaur`);
+  });
+
+  it("returns PokemonDetail on success", async () => {
+    mockFetch.mockResolvedValue(makeOkResponse(mockPokemon));
+
+    const result = await fetchPokemonByName("bulbasaur");
+
+    expect(result).toEqual(mockPokemon);
+  });
+
+  it("throws AppError on HTTP error (e.g. 404)", async () => {
+    mockFetch.mockResolvedValue(makeErrorResponse(404, "Not Found"));
+
+    await expect(fetchPokemonByName("missingno")).rejects.toMatchObject({
+      type: "HTTP_ERROR",
+      status: 404,
+    });
+  });
+
+  it("throws AppError on network failure", async () => {
+    mockFetch.mockRejectedValue(new TypeError("Failed to fetch"));
+
+    await expect(fetchPokemonByName("bulbasaur")).rejects.toMatchObject({
       type: "NETWORK_ERROR",
     });
   });
