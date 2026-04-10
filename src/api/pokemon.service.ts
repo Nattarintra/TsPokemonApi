@@ -1,5 +1,5 @@
 import type { Pokemon, PokemonCardProps, PokemonListResult } from "@/types/pokemon.type";
-import { fetchPokemonDetails, fetchPokemonList } from "@/api/pokemon.api";
+import { fetchPokemonSummaries, fetchPokemonList } from "@/api/pokemon.api";
 import { env } from "@/config";
 
 export const formatPokemon = (pokemon: Pokemon): PokemonCardProps => {
@@ -17,7 +17,7 @@ export const getPokemonListData = async (): Promise<PokemonListResult> => {
     await new Promise((resolve) => setTimeout(resolve, env.delayTime));
   }
   const list = await fetchPokemonList();
-  const details = await fetchPokemonDetails(list);
+  const details = await fetchPokemonSummaries(list);
   return {
     pokemons: details.pokemons.map(formatPokemon),
     failed: details.failed,

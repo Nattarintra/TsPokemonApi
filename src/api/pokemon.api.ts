@@ -25,7 +25,7 @@ export const fetchPokemonList = async (): Promise<PokemonListItem[]> => {
   }
 };
 
-export const fetchPokemonDetails = async (
+export const fetchPokemonSummaries = async (
   results: PokemonListItem[],
 ): Promise<{ pokemons: Pokemon[]; failed: number }> => {
   const { success, failed } = await safePromiseAll(

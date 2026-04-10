@@ -3,7 +3,6 @@ import ErrorBanner from "@/components/Errors/ErrorBanner";
 import EvolutionSection from "@/components/Evolution/EvolutionSection";
 import HeroSection from "@/components/Hero/HeroSection";
 import PageContainer from "@/components/Layout/PageContainer";
-import PokemonGridSkeleton from "@/components/Skeletons/PokemonGridSkeleton";
 import StatBars from "@/components/Stat/StatBars";
 import { getUserErrorMessage } from "@/errors/getErrorMessages";
 import { usePokemonDetailQuery } from "@/hooks/usePokemonDetailQuery";
@@ -23,7 +22,7 @@ const Details = (): ReactElement => {
     navigate(`/details/${id}`);
   };
 
-  if (isLoading) return <PokemonGridSkeleton />;
+  if (isLoading) return <p>Loading...</p>;
 
   if (error) {
     return (
@@ -36,7 +35,7 @@ const Details = (): ReactElement => {
     );
   }
 
-  if (!data) return <PokemonGridSkeleton />;
+  if (!data) return <p>Pokemon not found</p>;
 
   const { identity, bio, combat, evolutions, evolutionsFailed, weaknessesFailed } = data;
 

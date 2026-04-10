@@ -12,7 +12,6 @@ const SPECIES_URL = `${API_BASE}/pokemon-species`;
 const EVOLUTION_CHAIN_URL = `${API_BASE}/evolution-chain/1/`;
 const TYPE_URL = `${API_BASE}/type`;
 
-
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const makeOkResponse = (body: unknown): Response =>
@@ -40,7 +39,7 @@ let fetchPokemonById: PokemonApiModule["fetchPokemonById"];
 let fetchPokemonByName: PokemonApiModule["fetchPokemonByName"];
 let fetchPokemonSpecies: PokemonApiModule["fetchPokemonSpecies"];
 let fetchEvolutionChain: PokemonApiModule["fetchEvolutionChain"];
-let fetchPokemonDetails: PokemonApiModule["fetchPokemonDetails"];
+let fetchPokemonSummaries: PokemonApiModule["fetchPokemonSummaries"];
 let fetchPokemonType: PokemonApiModule["fetchPokemonType"];
 
 beforeAll(async () => {
@@ -50,7 +49,7 @@ beforeAll(async () => {
   fetchPokemonByName = module.fetchPokemonByName;
   fetchPokemonSpecies = module.fetchPokemonSpecies;
   fetchEvolutionChain = module.fetchEvolutionChain;
-  fetchPokemonDetails = module.fetchPokemonDetails;
+  fetchPokemonSummaries = module.fetchPokemonSummaries;
   fetchPokemonType = module.fetchPokemonType;
 });
 
@@ -285,9 +284,9 @@ describe("fetchEvolutionChain", () => {
   });
 });
 
-// ─── fetchPokemonDetails ──────────────────────────────────────────────────────
+// ─── fetchPokemonSummaries ──────────────────────────────────────────────────────
 
-describe("fetchPokemonDetails", () => {
+describe("fetchPokemonSummaries", () => {
   const mockPokemon = {
     id: 1,
     name: "bulbasaur",
@@ -304,7 +303,7 @@ describe("fetchPokemonDetails", () => {
   it("returns successfully fetched pokemon and a zero failed count", async () => {
     mockFetch.mockResolvedValue(makeOkResponse(mockPokemon));
 
-    const result = await fetchPokemonDetails(makeList(1));
+    const result = await fetchPokemonSummaries(makeList(1));
 
     expect(result.pokemons).toHaveLength(1);
     expect(result.pokemons[0]).toEqual(mockPokemon);
@@ -316,7 +315,7 @@ describe("fetchPokemonDetails", () => {
       .mockResolvedValueOnce(makeOkResponse(mockPokemon))
       .mockResolvedValueOnce(makeErrorResponse(404, "Not Found"));
 
-    const result = await fetchPokemonDetails(makeList(2));
+    const result = await fetchPokemonSummaries(makeList(2));
 
     expect(result.pokemons).toHaveLength(1);
     expect(result.failed).toBe(1);
@@ -325,14 +324,14 @@ describe("fetchPokemonDetails", () => {
   it("returns all failed when every request errors", async () => {
     mockFetch.mockResolvedValue(makeErrorResponse(500, "Server Error"));
 
-    const result = await fetchPokemonDetails(makeList(2));
+    const result = await fetchPokemonSummaries(makeList(2));
 
     expect(result.pokemons).toHaveLength(0);
     expect(result.failed).toBe(2);
   });
 
   it("returns empty arrays for an empty list", async () => {
-    const result = await fetchPokemonDetails([]);
+    const result = await fetchPokemonSummaries([]);
 
     expect(result.pokemons).toHaveLength(0);
     expect(result.failed).toBe(0);

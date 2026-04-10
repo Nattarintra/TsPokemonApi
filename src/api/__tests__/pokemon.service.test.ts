@@ -6,12 +6,12 @@ import type { Pokemon, PokemonListItem } from "@/types/pokemon.type";
 import { env } from "@/config/env";
 
 const mockFetchPokemonList = jest.fn<() => Promise<PokemonListItem[]>>();
-const mockFetchPokemonDetails =
+const mockFetchPokemonSummaries =
   jest.fn<(list: PokemonListItem[]) => Promise<{ pokemons: Pokemon[]; failed: number }>>();
 
 jest.unstable_mockModule("@/api/pokemon.api", () => ({
   fetchPokemonList: mockFetchPokemonList,
-  fetchPokemonDetails: mockFetchPokemonDetails,
+  fetchPokemonSummaries: mockFetchPokemonSummaries,
 }));
 
 // import after mock and use beforeAll
@@ -71,7 +71,7 @@ describe("Pokemon Service", () => {
 
       // 2. Assign the dummy data to the mocked fetch functions
       mockFetchPokemonList.mockResolvedValue(mockList);
-      mockFetchPokemonDetails.mockResolvedValue(mockDetails);
+      mockFetchPokemonSummaries.mockResolvedValue(mockDetails);
 
       // 3. Temporarily bypass the intentional UI delay for speed
       const originalDelay = env.delayTime;
@@ -82,7 +82,7 @@ describe("Pokemon Service", () => {
 
       // 5. Assert (Verify expectations)
       expect(mockFetchPokemonList).toHaveBeenCalledTimes(1);
-      expect(mockFetchPokemonDetails).toHaveBeenCalledWith(mockList);
+      expect(mockFetchPokemonSummaries).toHaveBeenCalledWith(mockList);
 
       // Should successfully pass mapped data back
       expect(result.failed).toBe(0);
