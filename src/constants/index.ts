@@ -13,4 +13,5 @@ export const MAX_STAT_VALUE = 255;
 export const QUERY_KEYS = {
   POKEMON_LIST: ["pokemon-list"],
   POKEMON_DETAIL: (id: number) => ["pokemon-detail", id],
+  POKEMON_NAV_NAME: (id: number) => ["pokemon-nav-name", id],
 } as const;
