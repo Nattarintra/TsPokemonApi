@@ -4,10 +4,12 @@ import HeroSection from "@/components/Details/Hero/HeroSection";
 import PageContainer from "@/components/Layout/PageContainer";
 import QueryBoundary from "@/components/QueryBoundary/QueryBoundary";
 import StatBars from "@/components/Stat/StatBars";
+import DetailsSkeleton from "@/components/Skeletons/DetailsSkeleton";
 import { usePokemonDetailQuery } from "@/hooks/usePokemonDetailQuery";
 import { usePokemonNavigation } from "@/hooks/usePokemonNavigation";
 import type { ReactElement } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import type { PokemonDetailProps } from "@/types/pokemon.type";
 
 const Details = (): ReactElement => {
   const { id } = useParams<{ id: string }>();
@@ -21,9 +23,14 @@ const Details = (): ReactElement => {
     navigate(`/details/${id}`);
   };
 
-  if (!data) return <p>Pokemon not found</p>;
-
-  const { identity, bio, combat, evolutions, evolutionsFailed, weaknessesFailed } = data;
+  const {
+    identity,
+    bio,
+    combat = { stats: [], types: [], weaknesses: [] },
+    evolutions = [],
+    evolutionsFailed = 0,
+    weaknessesFailed = 0,
+  } = (data ?? {}) as PokemonDetailProps;
 
   return (
     <QueryBoundary
@@ -32,7 +39,7 @@ const Details = (): ReactElement => {
       error={error}
       data={data}
       onRetry={refetch}
-      skeleton={<p>Loading...</p>}
+      skeleton={<DetailsSkeleton />}
     >
       <PageContainer>
         <NavigationBar

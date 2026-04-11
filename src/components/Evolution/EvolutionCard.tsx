@@ -27,8 +27,8 @@ const evolutionCardStyles: Record<string, SxProps<Theme>> = {
     },
   }),
   imageWrapper: (theme: Theme) => ({
-    width: theme.spacing(10),
-    height: theme.spacing(10),
+    width: theme.spacing(18),
+    height: theme.spacing(18),
     borderRadius: theme.shape.radius.full,
     backgroundColor: theme.palette.action.hover,
     display: "flex",
@@ -37,8 +37,8 @@ const evolutionCardStyles: Record<string, SxProps<Theme>> = {
     overflow: "hidden",
   }),
   image: {
-    width: "80%",
-    height: "80%",
+    width: "100%",
+    height: "100%",
     objectFit: "contain",
   },
   name: {
