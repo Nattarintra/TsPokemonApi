@@ -55,7 +55,7 @@ const NavigationBar = ({
           aria-label={`Go to ${previousPokemon.name}`}
         >
           <ArrowBackIosNewIcon sx={{ fontSize: 12 }} />
-          <Typography variant="caption">
+          <Typography variant="caption" sx={{ textTransform: "capitalize" }}>
             {formatId(previousPokemon.id)} {previousPokemon.name}
           </Typography>
         </ButtonBase>
@@ -69,7 +69,7 @@ const NavigationBar = ({
           onClick={() => onNavigate(nextPokemon.id)}
           aria-label={`Go to ${nextPokemon.name}`}
         >
-          <Typography variant="caption">
+          <Typography variant="caption" sx={{ textTransform: "capitalize" }}>
             {nextPokemon.name} {formatId(nextPokemon.id)}
           </Typography>
           <ArrowForwardIosIcon sx={{ fontSize: 12 }} />
