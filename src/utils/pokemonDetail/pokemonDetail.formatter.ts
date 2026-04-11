@@ -42,6 +42,8 @@ export const formatWeaknesses = (typeDetails: PokemonTypeDetail[]): string[] => 
   return Array.from(weaknessSet);
 };
 
+export const formatId = (id: number): string => `#${id.toString().padStart(4, "0")}`;
+
 export const formatStatName = (name: string): string =>
   name
     .split("-")

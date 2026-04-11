@@ -3,12 +3,11 @@ import { Box, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import type { EvolutionStage } from "@/types/pokemon.type";
 import PokemonTypeChips from "@/components/PokemonTypeChips/PokemonTypeChips";
+import { formatId } from "@/utils/pokemonDetail/pokemonDetail.formatter";
 
 interface EvolutionCardProps extends EvolutionStage {
   onClick: () => void;
 }
-
-const formatId = (id: number): string => `#${id.toString().padStart(4, "0")}`;
 
 const evolutionCardStyles: Record<string, SxProps<Theme>> = {
   container: (theme: Theme) => ({
@@ -27,8 +26,8 @@ const evolutionCardStyles: Record<string, SxProps<Theme>> = {
     },
   }),
   imageWrapper: (theme: Theme) => ({
-    width: theme.spacing(18),
-    height: theme.spacing(18),
+    width: { xs: theme.spacing(12), sm: theme.spacing(18) },
+    height: { xs: theme.spacing(12), sm: theme.spacing(18) },
     borderRadius: theme.shape.radius.full,
     backgroundColor: theme.palette.action.hover,
     display: "flex",

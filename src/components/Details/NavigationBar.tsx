@@ -3,6 +3,7 @@ import { Box, Typography, ButtonBase } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import type { SxProps, Theme } from "@mui/material";
+import { formatId } from "@/utils/pokemonDetail/pokemonDetail.formatter";
 
 interface PokemonNavItem {
   id: number;
@@ -14,8 +15,6 @@ interface NavigationBarProps {
   nextPokemon: PokemonNavItem | null;
   onNavigate: (id: number) => void;
 }
-
-const formatId = (id: number): string => `#${id.toString().padStart(4, "0")}`;
 
 const navigationBarStyles: Record<string, SxProps<Theme>> = {
   container: {

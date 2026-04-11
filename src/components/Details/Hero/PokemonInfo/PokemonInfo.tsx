@@ -6,6 +6,7 @@ import PokemonTypeChips from "@/components/PokemonTypeChips/PokemonTypeChips";
 import PokemonInfoTable from "./PokemonInfoTable";
 import ErrorBanner from "@/components/Errors/ErrorBanner";
 import { getPartialErrorMessage } from "@/errors/getErrorMessages";
+import { formatId } from "@/utils/pokemonDetail/pokemonDetail.formatter";
 
 interface PokemonInfoProps {
   id: number;
@@ -14,8 +15,6 @@ interface PokemonInfoProps {
   combat: PokemonCombatInfo;
   weaknessesFailed: number;
 }
-
-const formatId = (id: number): string => `#${id.toString().padStart(4, "0")}`;
 
 const pokemonInfoStyles: Record<string, SxProps<Theme>> = {
   container: {

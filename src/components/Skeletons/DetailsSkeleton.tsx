@@ -57,8 +57,8 @@ const styles: Record<string, SxProps<Theme>> = {
     gap: 1,
   },
   evolutionImage: (theme: Theme) => ({
-    width: theme.spacing(18),
-    height: theme.spacing(18),
+    width: { xs: theme.spacing(12), sm: theme.spacing(18) },
+    height: { xs: theme.spacing(12), sm: theme.spacing(18) },
   }),
 };
 
