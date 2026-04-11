@@ -1,6 +1,6 @@
 import NavigationBar from "@/components/Details/NavigationBar";
 import EvolutionSection from "@/components/Evolution/EvolutionSection";
-import HeroSection from "@/components/Hero/HeroSection";
+import HeroSection from "@/components/Details/Hero/HeroSection";
 import PageContainer from "@/components/Layout/PageContainer";
 import QueryBoundary from "@/components/QueryBoundary/QueryBoundary";
 import StatBars from "@/components/Stat/StatBars";
