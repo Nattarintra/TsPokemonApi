@@ -14,6 +14,7 @@ export const colors = {
   textPrimary: "#313131",
   textSecondary: "#666666",
   textMuted: "#919191",
+  statDefault: "#888780",
 
   border: "#E0E0E0",
   divider: "#D9D9D9",
