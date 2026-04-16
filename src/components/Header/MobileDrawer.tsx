@@ -1,5 +1,5 @@
 import { Drawer, Box, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
-import { navLinks } from "./header.config";
+import type { HeaderNavLink } from "./header.config";
 
 import { LinkBehavior } from "@/components/Links/LinkBehavior";
 import { DRAWER_WIDTH } from "@/constants";
@@ -7,9 +7,10 @@ import { DRAWER_WIDTH } from "@/constants";
 interface MobileDrawerProps {
   open: boolean;
   onClose: () => void;
+  navLinks: HeaderNavLink[];
 }
 
-const MobileDrawer = ({ open, onClose }: MobileDrawerProps) => {
+const MobileDrawer = ({ open, onClose, navLinks }: MobileDrawerProps) => {
   return (
     <Drawer anchor="right" open={open} onClose={onClose} aria-label="mobile navigation drawer">
       <Box sx={{ width: DRAWER_WIDTH }}>

@@ -1,4 +1,5 @@
 import { useState, type ReactElement } from "react";
+import { useLocation, useMatch } from "react-router-dom";
 
 import Logo from "@/components/Logo/Logo";
 import logo from "@/assets/images/logo.png";
@@ -6,7 +7,7 @@ import MobileDrawer from "./MobileDrawer";
 import { Box, AppBar, Toolbar, IconButton, Link, type SxProps, type Theme } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { LinkBehavior } from "@/components/Links/LinkBehavior";
-import { navLinks } from "./header.config";
+import { getNavLinks } from "./header.config";
 import SearchBar from "@/components/Search/SearchBar";
 import SearchModal from "@/components/Search/SearchModal";
 
@@ -28,6 +29,12 @@ const headerStyles: Record<HeaderStyleKeys, SxProps<Theme>> = {
 const Header = (): ReactElement => {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const location = useLocation();
+  const detailsMatch = useMatch("/details/:id");
+  const navLinks = getNavLinks({
+    isDetailsPage: Boolean(detailsMatch),
+    detailsPath: location.pathname,
+  });
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -63,7 +70,7 @@ const Header = (): ReactElement => {
             </IconButton>
           </Box>
 
-          <MobileDrawer open={open} onClose={() => setOpen(false)} />
+          <MobileDrawer open={open} onClose={() => setOpen(false)} navLinks={navLinks} />
           <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
         </Toolbar>
       </AppBar>
