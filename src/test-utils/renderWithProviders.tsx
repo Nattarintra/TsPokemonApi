@@ -7,19 +7,22 @@ import { pokemonTheme } from "@/theme/createPokemonTheme";
 
 type RenderWithProvidersOptions = Omit<RenderOptions, "wrapper"> & {
   initialEntries?: string[];
+  queryClient?: QueryClient;
 };
 
 export const renderWithProviders = (
   ui: ReactElement,
-  { initialEntries, ...options }: RenderWithProvidersOptions = {},
+  { initialEntries, queryClient: providedQueryClient, ...options }: RenderWithProvidersOptions = {},
 ) => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
+  const queryClient =
+    providedQueryClient ??
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
       },
-    },
-  });
+    });
 
   const Wrapper = ({ children }: PropsWithChildren) => (
     <QueryClientProvider client={queryClient}>

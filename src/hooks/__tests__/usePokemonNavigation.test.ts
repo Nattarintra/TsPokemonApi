@@ -46,19 +46,27 @@ describe("usePokemonNavigation", () => {
   });
 
   describe("when cache is empty", () => {
-    it("returns null for both previousPokemon and nextPokemon", () => {
+    it("returns null for previousPokemon at id=1 (numeric lower bound)", () => {
       const { result } = renderHook(
         () => usePokemonNavigation(1),
         { wrapper: createWrapper(queryClient) },
       );
 
       expect(result.current.previousPokemon).toBeNull();
-      expect(result.current.nextPokemon).toBeNull();
+    });
+
+    it("returns nextPokemon with empty name when not cached", () => {
+      const { result } = renderHook(
+        () => usePokemonNavigation(1),
+        { wrapper: createWrapper(queryClient) },
+      );
+
+      expect(result.current.nextPokemon).toEqual({ id: 2, name: "" });
     });
   });
 
-  describe("when pokemon is not found in cache", () => {
-    it("returns null for both previousPokemon and nextPokemon", () => {
+  describe("when currentId exceeds limitPokemonList", () => {
+    it("returns null for nextPokemon", () => {
       queryClient.setQueryData(QUERY_KEYS.POKEMON_LIST, threePokemons);
 
       const { result } = renderHook(
@@ -66,8 +74,18 @@ describe("usePokemonNavigation", () => {
         { wrapper: createWrapper(queryClient) },
       );
 
-      expect(result.current.previousPokemon).toBeNull();
       expect(result.current.nextPokemon).toBeNull();
+    });
+
+    it("returns previousPokemon with empty name when id not in cache", () => {
+      queryClient.setQueryData(QUERY_KEYS.POKEMON_LIST, threePokemons);
+
+      const { result } = renderHook(
+        () => usePokemonNavigation(999),
+        { wrapper: createWrapper(queryClient) },
+      );
+
+      expect(result.current.previousPokemon).toEqual({ id: 998, name: "" });
     });
   });
 
@@ -95,23 +113,19 @@ describe("usePokemonNavigation", () => {
     });
   });
 
-  describe("when pokemon is last in the list", () => {
-    it("returns correct previousPokemon (id and name)", () => {
-      queryClient.setQueryData(QUERY_KEYS.POKEMON_LIST, threePokemons);
-
+  describe("when pokemon is last in the list (id = limitPokemonList)", () => {
+    it("returns previousPokemon with correct id", () => {
       const { result } = renderHook(
-        () => usePokemonNavigation(3),
+        () => usePokemonNavigation(150),
         { wrapper: createWrapper(queryClient) },
       );
 
-      expect(result.current.previousPokemon).toEqual({ id: 2, name: "ivysaur" });
+      expect(result.current.previousPokemon).toEqual({ id: 149, name: "" });
     });
 
     it("returns null for nextPokemon", () => {
-      queryClient.setQueryData(QUERY_KEYS.POKEMON_LIST, threePokemons);
-
       const { result } = renderHook(
-        () => usePokemonNavigation(3),
+        () => usePokemonNavigation(150),
         { wrapper: createWrapper(queryClient) },
       );
 

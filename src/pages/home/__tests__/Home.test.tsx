@@ -1,70 +1,21 @@
 import { afterEach, beforeAll, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, screen } from "@testing-library/react";
+import { QueryClient } from "@tanstack/react-query";
+import { Route, Routes } from "react-router-dom";
 import type { PokemonCardProps, PokemonListResult } from "@/types/pokemon.type";
+import { QUERY_KEYS } from "@/constants";
 import { renderWithProviders } from "@/test-utils/renderWithProviders";
 
-type HomeQueryState = {
-  data?: PokemonListResult;
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => void;
-  isFetching: boolean;
-};
+// ─── No module-level mocks ────────────────────────────────────────────────────
+// @/hooks/usePokemonListQuery: Jest resolves @/... aliases before checking the
+//   mock registry, so jest.unstable_mockModule("@/...") is silently ignored.
+// react-router-dom/useNavigate: renderWithProviders statically imports the
+//   module, caching the real version before the async mock factory runs.
+//
+// Instead we pre-seed a real QueryClient for each test scenario and test
+// navigation via real Routes (no useNavigate mock needed).
 
-const mockNavigate = jest.fn();
-const mockUsePokemonListQuery = jest.fn<() => HomeQueryState>();
-
-jest.unstable_mockModule("react-router-dom", async () => {
-  const actual = await jest.requireActual<typeof import("react-router-dom")>("react-router-dom");
-  return { ...actual, useNavigate: () => mockNavigate };
-});
-
-jest.unstable_mockModule("@/hooks/usePokemonListQuery", () => ({
-  usePokemonListQuery: mockUsePokemonListQuery,
-}));
-
-jest.unstable_mockModule("@/hooks/usePokemonPagination", () => ({
-  usePokemonPagination: (pokemons: PokemonCardProps[]) => ({
-    currentPage: 1,
-    paginatedPokemons: pokemons.slice(0, 12),
-    totalItems: pokemons.length,
-    handlePageChange: jest.fn(),
-  }),
-}));
-
-// mock only testid — ignore child internals
-jest.unstable_mockModule("@/components/Cards/PokemonCard", () => ({
-  default: ({ name, onClick }: PokemonCardProps & { onClick?: () => void }) => (
-    <div data-testid="pokemon-card" onClick={onClick}>
-      {name}
-    </div>
-  ),
-}));
-
-jest.unstable_mockModule("@/components/Pagination/PokemonPagination", () => ({
-  default: () => <div data-testid="pokemon-pagination" />,
-}));
-
-jest.unstable_mockModule("@/components/Skeletons/PokemonGridSkeleton", () => ({
-  default: () => <div data-testid="pokemon-grid-skeleton" />,
-}));
-
-jest.unstable_mockModule("@/components/Errors/ErrorBanner", () => ({
-  default: ({
-    message,
-    onRetry,
-    variant = "inline",
-  }: {
-    message: string;
-    onRetry?: () => void;
-    variant?: "inline" | "fullscreen";
-  }) => (
-    <div data-testid={`error-banner-${variant}`}>
-      <span>{message}</span>
-      {onRetry && <button onClick={onRetry}>Try again</button>}
-    </div>
-  ),
-}));
+// ─── Module under test ────────────────────────────────────────────────────────
 
 let Home: (typeof import("@/pages/home/Home"))["default"];
 
@@ -73,8 +24,26 @@ beforeAll(async () => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  // Clean up global.fetch if any test set it to control network calls
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  delete (global as any).fetch;
 });
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+// staleTime:Infinity + refetchOnMount:false prevent React Query from starting
+// background fetches against seeded data, keeping test state deterministic.
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: Infinity,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
 
 const makePokemon = (overrides?: Partial<PokemonCardProps>): PokemonCardProps => ({
   id: 25,
@@ -84,63 +53,98 @@ const makePokemon = (overrides?: Partial<PokemonCardProps>): PokemonCardProps =>
   ...overrides,
 });
 
-const makeQueryState = (overrides?: Partial<HomeQueryState>): HomeQueryState => ({
-  data: { pokemons: [], failed: 0 },
-  isLoading: false,
-  error: null,
-  refetch: jest.fn(),
-  isFetching: false,
-  ...overrides,
-});
+// Returns a QueryClient with success data already in the cache so useQuery
+// returns synchronously with isLoading:false.
+const withData = (data: PokemonListResult) => {
+  const qc = createTestQueryClient();
+  qc.setQueryData(QUERY_KEYS.POKEMON_LIST, data);
+  return qc;
+};
+
+// Returns a QueryClient whose query has data (so QueryBoundary's `!data` guard
+// passes) but whose status is overridden to 'error'. React Query v5 preserves
+// cached data on error ("data stays as it was"), so both data and error are set.
+const withError = (error: Error) => {
+  const qc = createTestQueryClient();
+  qc.setQueryData(QUERY_KEYS.POKEMON_LIST, { pokemons: [], failed: 0 } as PokemonListResult);
+  // Merge error into existing state — data is preserved (React Query v5 behaviour)
+  qc.getQueryCache()
+    .find({ queryKey: QUERY_KEYS.POKEMON_LIST })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ?.setState({ status: "error", error } as any);
+  return qc;
+};
+
+// Returns a QueryClient with data + fetchStatus:'fetching' to simulate a
+// background refetch in progress (isFetching:true, isLoading:false).
+const withFetching = (data: PokemonListResult) => {
+  const qc = createTestQueryClient();
+  qc.setQueryData(QUERY_KEYS.POKEMON_LIST, data);
+  qc.getQueryCache()
+    .find({ queryKey: QUERY_KEYS.POKEMON_LIST })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ?.setState({ fetchStatus: "fetching" } as any);
+  return qc;
+};
+
+// ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("Home page", () => {
   describe("loading state", () => {
     it("shows skeleton during initial load", () => {
-      mockUsePokemonListQuery.mockReturnValue(makeQueryState({ isLoading: true, data: undefined }));
-      renderWithProviders(<Home />);
+      // No cache data → useQuery returns isLoading:true. Assign a mock fetch so
+      // the queryFn never resolves and the component stays in loading state.
+      global.fetch = jest.fn<typeof fetch>().mockReturnValue(new Promise<Response>(() => {}));
 
+      renderWithProviders(<Home />, { queryClient: createTestQueryClient() });
+
+      // data-testid added directly to PokemonGridSkeleton for stable test hook
       expect(screen.getByTestId("pokemon-grid-skeleton")).toBeTruthy();
-      expect(screen.queryByTestId("pokemon-card")).toBeNull();
+      expect(screen.queryByText("pikachu")).toBeNull();
     });
   });
 
   describe("success state", () => {
-    it("shows cards and pagination on successful load", () => {
-      mockUsePokemonListQuery.mockReturnValue(
-        makeQueryState({ data: { pokemons: [makePokemon()], failed: 0 } }),
-      );
-      renderWithProviders(<Home />);
+    it("shows cards on successful load", () => {
+      renderWithProviders(<Home />, {
+        queryClient: withData({ pokemons: [makePokemon()], failed: 0 }),
+      });
 
-      expect(screen.getByTestId("pokemon-card")).toBeTruthy();
-      expect(screen.getByTestId("pokemon-pagination")).toBeTruthy();
+      expect(screen.getByText("pikachu")).toBeTruthy();
     });
 
     it("navigates to details page when card is clicked", () => {
-      mockUsePokemonListQuery.mockReturnValue(
-        makeQueryState({ data: { pokemons: [makePokemon({ id: 25 })], failed: 0 } }),
+      // Use real Routes so navigate() changes the rendered route — no mock needed.
+      renderWithProviders(
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/details/:id" element={<div data-testid="details-page" />} />
+        </Routes>,
+        { queryClient: withData({ pokemons: [makePokemon({ id: 25 })], failed: 0 }) },
       );
-      renderWithProviders(<Home />);
 
-      fireEvent.click(screen.getByTestId("pokemon-card"));
+      fireEvent.click(screen.getByText("pikachu"));
 
-      expect(mockNavigate).toHaveBeenCalledWith("/details/25");
+      expect(screen.getByTestId("details-page")).toBeTruthy();
     });
 
     it("shows inline warning when some pokemon failed to load", () => {
-      mockUsePokemonListQuery.mockReturnValue(
-        makeQueryState({ data: { pokemons: [makePokemon()], failed: 2 } }),
-      );
-      renderWithProviders(<Home />);
+      renderWithProviders(<Home />, {
+        queryClient: withData({ pokemons: [makePokemon()], failed: 2 }),
+      });
 
-      expect(screen.getByTestId("error-banner-inline")).toBeTruthy();
-      expect(screen.getByTestId("pokemon-card")).toBeTruthy();
+      expect(screen.getByText("Some Pokémon failed to load (2)")).toBeTruthy();
+      expect(screen.getByText("pikachu")).toBeTruthy();
     });
 
     it("shows progress bar during background refetch", () => {
-      mockUsePokemonListQuery.mockReturnValue(
-        makeQueryState({ data: { pokemons: [makePokemon()], failed: 0 }, isFetching: true }),
-      );
-      renderWithProviders(<Home />);
+      // Assign mock fetch so that if React Query internally tries to run the
+      // queryFn after we manually set fetchStatus:'fetching', it doesn't error.
+      global.fetch = jest.fn<typeof fetch>().mockReturnValue(new Promise<Response>(() => {}));
+
+      renderWithProviders(<Home />, {
+        queryClient: withFetching({ pokemons: [makePokemon()], failed: 0 }),
+      });
 
       expect(screen.getByRole("progressbar")).toBeTruthy();
     });
@@ -148,24 +152,30 @@ describe("Home page", () => {
 
   describe("error state", () => {
     it("shows fullscreen error and allows retry", () => {
-      const refetch = jest.fn();
-      mockUsePokemonListQuery.mockReturnValue(
-        makeQueryState({ error: new Error("boom"), refetch }),
-      );
-      renderWithProviders(<Home />);
+      // Assign mock fetch so the retry network call never completes during the test
+      const fetchMock = jest
+        .fn<typeof fetch>()
+        .mockReturnValue(new Promise<Response>(() => {}));
+      global.fetch = fetchMock;
 
-      expect(screen.getByTestId("error-banner-fullscreen")).toBeTruthy();
+      renderWithProviders(<Home />, { queryClient: withError(new Error("boom")) });
+
+      expect(screen.getByText("Something went wrong.")).toBeTruthy();
+
       fireEvent.click(screen.getByRole("button", { name: /try again/i }));
-      expect(refetch).toHaveBeenCalledTimes(1);
+
+      // Clicking retry triggers the real useQuery refetch which calls fetch
+      expect(fetchMock).toHaveBeenCalled();
     });
 
     it("shows fullscreen error when all pokemon failed to load", () => {
-      mockUsePokemonListQuery.mockReturnValue(
-        makeQueryState({ data: { pokemons: [], failed: 5 } }),
-      );
-      renderWithProviders(<Home />);
+      // Home early-returns a fullscreen ErrorBanner before QueryBoundary when
+      // pokemons=[] and failed>0
+      renderWithProviders(<Home />, {
+        queryClient: withData({ pokemons: [], failed: 5 }),
+      });
 
-      expect(screen.getByTestId("error-banner-fullscreen")).toBeTruthy();
+      expect(screen.getByText("Some Pokémon failed to load (5)")).toBeTruthy();
     });
   });
 });

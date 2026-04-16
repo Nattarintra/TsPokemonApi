@@ -15,7 +15,12 @@ const pokemonGridSkeletonStyles: Record<"grid", SxProps<Theme>> = {
 
 const PokemonGridSkeleton = (): ReactElement => {
   return (
-    <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} sx={pokemonGridSkeletonStyles.grid}>
+    <Grid
+      data-testid="pokemon-grid-skeleton"
+      container
+      spacing={{ xs: 2, sm: 3, md: 4 }}
+      sx={pokemonGridSkeletonStyles.grid}
+    >
       {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
         <Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
           <PokemonCardSkeleton />
