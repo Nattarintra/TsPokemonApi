@@ -9,9 +9,9 @@ import PokemonGridSkeleton from "@/components/Skeletons/PokemonGridSkeleton";
 import type { PokemonCardProps, PokemonListResult } from "@/types/pokemon.type";
 import PokemonPagination from "@/components/Pagination/PokemonPagination";
 import { env } from "@/config";
-import { usePokemonPagination } from "@/hooks/usePokemonPagination";
 import PageContainer from "@/components/Layout/PageContainer";
 import QueryBoundary from "@/components/QueryBoundary/QueryBoundary";
+import { useSearchFilter } from "@/hooks/useSearchFilter";
 
 const Home = (): ReactElement => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const Home = (): ReactElement => {
   const failed = typedData?.failed ?? 0;
 
   const { currentPage, paginatedPokemons, totalItems, handlePageChange } =
-    usePokemonPagination(pokemons);
+    useSearchFilter(pokemons);
 
   //  Edge case: nothing loaded
   if (pokemons.length === 0 && failed > 0) {

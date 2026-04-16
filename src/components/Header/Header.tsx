@@ -7,6 +7,8 @@ import { Box, AppBar, Toolbar, IconButton, Link, type SxProps, type Theme } from
 import MenuIcon from "@mui/icons-material/Menu";
 import { LinkBehavior } from "@/components/Links/LinkBehavior";
 import { navLinks } from "./header.config";
+import SearchBar from "@/components/Search/SearchBar";
+import SearchModal from "@/components/Search/SearchModal";
 
 type HeaderStyleKeys = "navContainer" | "mobileButton";
 
@@ -25,33 +27,44 @@ const headerStyles: Record<HeaderStyleKeys, SxProps<Theme>> = {
 
 const Header = (): ReactElement => {
   const [open, setOpen] = useState(false);
-
-  const toggleDrawer = (state: boolean) => {
-    setOpen(state);
-  };
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar>
-        <Toolbar>
-          <Logo src={logo} alt="Pokemon logo" />
-          {/* Desktop */}
-          <Box sx={headerStyles.navContainer}>
-            {navLinks.map((link) => (
-              <Link key={link.path} component={LinkBehavior} to={link.path}>
-                {link.label}
-              </Link>
-            ))}
+        <Toolbar sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {/* Left — Logo fixed width */}
+          <Box sx={{ flexShrink: 0 }}>
+            <Logo src={logo} alt="Pokemon logo" />
           </Box>
-          {/* Mobile */}
-          <IconButton
-            aria-label="open navigation menu"
-            onClick={() => toggleDrawer(true)}
-            sx={headerStyles.mobileButton}
-          >
-            <MenuIcon />
-          </IconButton>
+
+          {/* Center — SearchBar takes remaining space */}
+          <Box sx={{ flex: 1, display: "flex", justifyContent: "center", px: 1 }}>
+            <Box sx={{ width: { xs: "100%", md: "320px" } }}>
+              <SearchBar onClick={() => setSearchOpen(true)} />
+            </Box>
+          </Box>
+
+          {/* Right — Nav + Hamburger fixed width */}
+          <Box sx={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
+            <Box sx={headerStyles.navContainer}>
+              {navLinks.map((link) => (
+                <Link key={link.path} component={LinkBehavior} to={link.path}>
+                  {link.label}
+                </Link>
+              ))}
+            </Box>
+            <IconButton
+              aria-label="open navigation menu"
+              onClick={() => setOpen(true)}
+              sx={headerStyles.mobileButton}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Box>
+
           <MobileDrawer open={open} onClose={() => setOpen(false)} />
+          <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
         </Toolbar>
       </AppBar>
     </Box>
