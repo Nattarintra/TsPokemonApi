@@ -3,6 +3,7 @@ import type { HeaderNavLink } from "./header.config";
 
 import { LinkBehavior } from "@/components/Links/LinkBehavior";
 import { DRAWER_WIDTH } from "@/constants";
+import { useLocation } from "react-router-dom";
 
 interface MobileDrawerProps {
   open: boolean;
@@ -11,13 +12,15 @@ interface MobileDrawerProps {
 }
 
 const MobileDrawer = ({ open, onClose, navLinks }: MobileDrawerProps) => {
+  const { pathname } = useLocation();
+
   return (
     <Drawer anchor="right" open={open} onClose={onClose} aria-label="mobile navigation drawer">
       <Box sx={{ width: DRAWER_WIDTH }}>
         <List sx={{ pt: 2 }}>
           {navLinks.map((link) => (
             <ListItem key={link.path} disablePadding>
-              <ListItemButton component={LinkBehavior} to={link.path} onClick={onClose}>
+              <ListItemButton component={LinkBehavior} to={link.path} onClick={onClose} selected={pathname === link.path}>
                 <ListItemText primary={link.label} />
               </ListItemButton>
             </ListItem>

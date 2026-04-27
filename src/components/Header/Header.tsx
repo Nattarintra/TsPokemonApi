@@ -11,7 +11,7 @@ import { getNavLinks } from "./header.config";
 import SearchBar from "@/components/Search/SearchBar";
 import SearchModal from "@/components/Search/SearchModal";
 
-type HeaderStyleKeys = "navContainer" | "mobileButton";
+type HeaderStyleKeys = "navContainer" | "mobileButton" | "navLink" | "navLinkActive";
 
 const headerStyles: Record<HeaderStyleKeys, SxProps<Theme>> = {
   navContainer: {
@@ -23,6 +23,16 @@ const headerStyles: Record<HeaderStyleKeys, SxProps<Theme>> = {
   mobileButton: {
     ml: "auto",
     display: { xs: "flex", md: "none" },
+  },
+
+  navLink: {
+    borderBottom: "2px solid transparent",
+    pb: 0.5,
+  },
+
+  navLinkActive: {
+    borderBottom: "2px solid currentColor",
+    pb: 0.5,
   },
 };
 
@@ -56,7 +66,12 @@ const Header = (): ReactElement => {
           <Box sx={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
             <Box sx={headerStyles.navContainer}>
               {navLinks.map((link) => (
-                <Link key={link.path} component={LinkBehavior} to={link.path}>
+                <Link
+                  key={link.path}
+                  component={LinkBehavior}
+                  to={link.path}
+                  sx={location.pathname === link.path ? headerStyles.navLinkActive : headerStyles.navLink}
+                >
                   {link.label}
                 </Link>
               ))}
