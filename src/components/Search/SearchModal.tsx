@@ -157,7 +157,13 @@ const SearchModal = ({ open, onClose }: SearchModalProps): ReactElement => {
           <Typography variant="caption" sx={searchModalStyles.label}>
             Filter by type
           </Typography>
-          <TypeFilterButtons activeType={activeType} onTypeChange={handleTypeChange} />
+          <TypeFilterButtons
+            activeType={activeType}
+            onTypeChange={(type) => {
+              handleTypeChange(type);
+              onClose();
+            }}
+          />
         </DialogContent>
       </Dialog>
     </>
