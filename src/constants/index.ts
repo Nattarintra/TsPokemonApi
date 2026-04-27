@@ -12,6 +12,8 @@ export const MAX_STAT_VALUE = 255;
 
 export const DEBOUNCE_MS = 400;
 
+export const FAVORITES_KEY = "pokemon-favorites";
+
 export const QUERY_KEYS = {
   POKEMON_LIST: ["pokemon-list"],
   POKEMON_DETAIL: (id: number) => ["pokemon-detail", id],

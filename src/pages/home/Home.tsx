@@ -12,10 +12,12 @@ import { env } from "@/config";
 import PageContainer from "@/components/Layout/PageContainer";
 import QueryBoundary from "@/components/QueryBoundary/QueryBoundary";
 import { useSearchFilter } from "@/hooks/useSearchFilter";
+import { useFavorites } from "@/hooks/useFavorites";
 
 const Home = (): ReactElement => {
   const navigate = useNavigate();
   const { data, isLoading, error, refetch, isFetching } = usePokemonListQuery();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   // Safe fallback
   const typedData = data as PokemonListResult | undefined;
@@ -53,7 +55,15 @@ const Home = (): ReactElement => {
         <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
           {paginatedPokemons.map((pokemon: PokemonCardProps) => (
             <Grid key={pokemon.id} size={{ xs: 12, sm: 6, md: 4 }}>
-              <PokemonCard {...pokemon} onClick={() => navigate(`/details/${pokemon.id}`)} />
+              <PokemonCard
+                {...pokemon}
+                onClick={() => navigate(`/details/${pokemon.id}`)}
+                isFavorite={isFavorite(pokemon.id)}
+                onFavoriteToggle={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(pokemon);
+                }}
+              />
             </Grid>
           ))}
         </Grid>

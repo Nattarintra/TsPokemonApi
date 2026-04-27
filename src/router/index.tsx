@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import App from "@/App";
 import PokemonGridSkeleton from "@/components/Skeletons/PokemonGridSkeleton";
 import DetailsSkeleton from "@/components/Skeletons/DetailsSkeleton";
-import { Details, Home, NotFound } from "./lazyRoutes";
+import { Details, Favorites, Home, NotFound } from "./lazyRoutes";
 
 export const index = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +21,14 @@ export const index = createBrowserRouter(
         element={
           <Suspense fallback={<DetailsSkeleton />}>
             <Details />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/favorites"
+        element={
+          <Suspense fallback={null}>
+            <Favorites />
           </Suspense>
         }
       />

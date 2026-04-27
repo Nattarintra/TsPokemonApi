@@ -3,9 +3,12 @@ import { CardMedia, Typography, Box } from "@mui/material";
 import PokemonTypeChips from "@/components/PokemonTypeChips/PokemonTypeChips";
 import type { PokemonCardProps } from "@/types/pokemon.type";
 import PokemonCardLayout from "./PokemonCardLayout";
+import FavoriteButton from "@components/Favorites/FavoriteButton";
 
 interface PokemonCardExtendedProps extends PokemonCardProps {
   onClick?: () => void;
+  isFavorite: boolean;
+  onFavoriteToggle: (e: React.MouseEvent) => void;
 }
 
 const PokemonCard = ({
@@ -14,6 +17,8 @@ const PokemonCard = ({
   image,
   types,
   onClick,
+  isFavorite,
+  onFavoriteToggle,
 }: PokemonCardExtendedProps): ReactElement => {
   return (
     <PokemonCardLayout
@@ -28,9 +33,12 @@ const PokemonCard = ({
       }
       content={
         <>
-          <Typography variant="caption" color="text.secondary" fontWeight="bold">
-            #{id.toString().padStart(4, "0")}
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Typography variant="caption" color="text.secondary" fontWeight="bold">
+              #{id.toString().padStart(4, "0")}
+            </Typography>
+            <FavoriteButton isFavorite={isFavorite} onClick={onFavoriteToggle} />
+          </Box>
 
           <Typography variant="h2" sx={{ mt: 1, mb: 1, textTransform: "capitalize" }}>
             {name}
