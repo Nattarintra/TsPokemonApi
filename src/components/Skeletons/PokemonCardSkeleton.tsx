@@ -17,7 +17,10 @@ const PokemonCardSkeleton = (): ReactElement => {
       image={<Skeleton variant="rectangular" width="100%" height="100%" />}
       content={
         <>
-          <SkeletonText variant="caption" width={skeleton.text.idWidth} />
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <SkeletonText variant="caption" width={skeleton.text.idWidth} />
+            <Skeleton variant="circular" width={skeleton.favoriteButton.size} height={skeleton.favoriteButton.size} />
+          </Box>
 
           <Box sx={{ mt: 1, mb: 1 }}>
             <SkeletonText variant="h2" width={skeleton.text.nameWidth} />

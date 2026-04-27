@@ -8,4 +8,7 @@ export const skeleton = {
     idWidth: "25%",
     nameWidth: "70%",
   },
+  favoriteButton: {
+    size: 30,
+  },
 };
